@@ -8,9 +8,3 @@
     * [方法的引用](docs/javase/new/方法的引用.md)
     * [Lamda表达式](docs/javase/new/Lamda表达式.md)
   
-* [备战面试](docs/a-1备战面试.md)
-
-* Java
-  * [Java基础](docs/b-1Java基础.md)
-  * [Java集合](docs/JavaSE集合.md)
-  * [Java多线程](docs/b-3Java多线程.md)
