@@ -1,10 +1,77 @@
-文章参考：https://blog.csdn.net/caoxiaohong1005/article/details/79486254
 
-##  BiConsumer<T, U>函数式接口
 
-### 函数式接口实践
+# Java8新特性
 
-**实践一：Comsumer函数式接口**
+## Supplier接口
+
+### 源码分析
+
+该接口是一个提供者的意思，只有一个 get（） 方法，当传入一个泛型T对象，则可使用 get（）方法返回 该对象实例的引用。
+
+```java
+@FunctionalInterface
+public interface Supplier<T> {
+ 
+    /**
+     * Gets a result.
+     *
+     * @return a result
+     */
+    T get();
+}
+```
+
+### Supplier接口实战
+
+
+
+创建Consumer类
+
+```java
+public static class Consumer {
+        private String name;
+        public Consumer() {
+ 
+        }
+        public Consumer(String name) {
+            super();
+            this.name = name;
+        }
+        public String getName() {
+            return name;
+        }
+        public void setName(String name) {
+            this.name = name;
+        }
+}
+```
+
+
+
+使用Supplier接口获取对象的引用
+
+```java
+// 1、创建String类型的实例，并由supplier引用
+Supplier<String> supplier = String::new;
+System.out.println(supplier.get());	//  ""
+
+// 2、创建Consumer对象的实例，并由supplier引用
+Supplier<Consumer> supplierCon = Consumer::new;
+
+// 使用supplier.get()方法返回该实例的引用
+Consumer consumer = supplierCon.get();
+consumer.setName("我是消费者");
+
+System.out.println(consumer.getName()); // 我是消费者
+```
+
+
+
+## Consumer接口
+
+### Consumer接口实战
+
+实践一：Comsumer函数式接口
 
 ```java
 /**
@@ -22,7 +89,7 @@ public void testFunction01(){
 }
 ```
 
-**运行结果：**
+运行结果：
 
 ```
 sb字符串后面将会跟随####大SB
@@ -30,7 +97,7 @@ sb字符串后面将会跟随####大SB
 
 
 
-**实践二：BiConsumer函数式接口**
+实践二：BiConsumer函数式接口
 
 ```java
 @Test
@@ -49,7 +116,7 @@ public void testFunction02(){
 }
 ```
 
-**运行结果：**
+运行结果：
 
 ```
 我是参数01,我是参数02。我们被BiConsumer.accept(T,V)接收并处理了
@@ -57,7 +124,7 @@ public void testFunction02(){
 
 
 
-### 函数式接口源码
+### BiConsumer接口源码分析
 
 ```java
 package sourcecode.analysis;
@@ -110,7 +177,7 @@ public interface BiConsumer<T, U> {
 
 
 
-## MybatisPlus中的函数式接口的调用分析
+### MybatisPlus中的函数式接口的调用分析
 
 
 
@@ -170,3 +237,138 @@ protected <E> boolean executeBatch(Collection<E> list, int batchSize, BiConsumer
     });
 }
 ```
+
+
+
+
+
+## 方法的引用
+
+### 概念及使用
+
+方法的引用：**通过类或对象的引用，使用`::`来调用类中的静态方法或实例对象中的方法**
+
+下面，我们在 Car 类中定义了 4 个方法作为例子来区分 Java 中 4 种不同方法的引用。
+
+```java
+package com.runoob.main;
+ 
+@FunctionalInterface
+public interface Supplier<T> {
+    T get();
+}
+ 
+class Car {
+    //Supplier是jdk1.8的接口，这里和lamda一起使用了
+    public static Car create(final Supplier<Car> supplier) {
+        return supplier.get();
+    }
+ 
+    public static void collide(final Car car) {
+        System.out.println("Collided " + car.toString());
+    }
+ 
+    public void follow(final Car another) {
+        System.out.println("Following the " + another.toString());
+    }
+ 
+    public void repair() {
+        System.out.println("Repaired " + this.toString());
+    }
+}
+```
+
+
+
+其语法有
+
+**构造器引用：**它的语法是Class::new，或者更一般的`Class< T >::new` 实例如下：
+
+```java
+final Car car = Car.create( Car::new );
+final List< Car > cars = Arrays.asList( car );
+```
+
+**静态方法引用：**它的语法是`Class::static_method` 实例如下：
+
+```java
+cars.forEach( Car::collide );
+```
+
+**特定对象的方法引用：**它的语法是`instance::method `实例如下：
+
+```
+final Car police = Car.create( Car::new );
+cars.forEach( police::follow );
+```
+
+**特定类的任意对象的方法引用：**它的语法是`Class::method`实例如下：
+
+```java
+@Test
+public void test03(){
+    List names = new ArrayList();
+
+    names.add("Google");
+    names.add("Runoob");
+    names.add("Taobao");
+    names.add("Baidu");
+    names.add("Sina");
+
+    // 使用::实现对特定类的方法
+    names.forEach(System.out::println);
+}
+```
+
+在下列中 consumer 是对 println()方法的引用，使用上述基本用法则是:
+
+```java
+Consumer<String> consumer = (String x) -> {
+  synchronized (this) {
+      print(x);
+      newLine();
+	}
+}
+
+// 使用accept()方法接收参数
+consumer.accept(x)		// 然后执行方法体函数
+```
+
+以上参考：https://www.runoob.com/java/java8-new-features.html
+
+
+
+### forEach源码分析
+
+```java
+// 参考下列源码有
+// 1、action是对PrintStream.println()方法的引用
+default void forEach(Consumer<? super T> action) {
+    Objects.requireNonNull(action);
+    
+    for (T t : this) {
+        // 2、接受参数 t ，调用方法println(String x)并执行
+        action.accept(t);
+    }
+}
+```
+
+**System类**
+
+```java
+public final class System {
+	public final static PrintStream out = null;
+}
+```
+
+**public class PrintStream.println**
+
+```java
+public void println(String x) {
+    synchronized (this) {
+        print(x);
+        newLine();
+    }
+}
+```
+

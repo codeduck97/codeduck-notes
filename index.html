@@ -29,6 +29,10 @@
       coverpage: true,//封面,_coverpage.md
       homepage: 'README.md',
       loadSidebar: true,
+	  subMaxLevel: 2,
+	  alias: {
+		'/.*/_sidebar.md': '/_sidebar.md'
+	  },
       auto2top: true,//切换页面后是否自动跳转到页面顶部
       //ga: 'UA-138586553-1',
       //logo: 'https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-3logo-透明.png' ,
@@ -59,6 +63,8 @@
   <script src="//unpkg.com/docsify-copy-code"></script>
   <!-- 图片缩放 -->
   <script src="//unpkg.com/docsify/lib/plugins/zoom-image.js"></script>
+  <!--整合emoji表情-->
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/emoji.min.js"></script>
 </body>
 
 </html>
