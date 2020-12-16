@@ -13,6 +13,9 @@
 </head>
 
 <body>
+   <nav>
+    <a href="https://gitee.com/code-duck/codeduck-blog.git">CodeDuck博客项目</a>
+  </nav>
   <div id="app"></div>
   <!-- docsify-edit-on-github -->
   <script src="//unpkg.com/docsify-edit-on-github/index.js"></script>
@@ -23,31 +26,31 @@
     }
 
     window.$docsify = {
-      name: 'CodeDuck',
+      name: 'CodeDuck\'s notes',
       repo: 'https://gitee.com/code-duck/blog',
-      maxLevel: 3,//最大支持渲染的标题层级
-      coverpage: true,//封面,_coverpage.md
-      homepage: 'README.md',
-      loadSidebar: true,
-	  subMaxLevel: 2,
-	  alias: {
-		'/.*/_sidebar.md': '/_sidebar.md'
-	  },
+      maxLevel: 4,//最大支持渲染的标题层级
+      coverpage: true,// 设置封面
+	  onlyCover: true, // 只显示封面
+	  //loadSidebar: true, // 设置侧边栏
+	  //subMaxLevel: 3, //侧边栏显示当前页面的目录(标题)
       auto2top: true,//切换页面后是否自动跳转到页面顶部
-      //ga: 'UA-138586553-1',
-      //logo: 'https://my-blog-to-use.oss-cn-beijing.aliyuncs.com/2019-3logo-透明.png' ,
+      loadNavbar: true, // 设置导航栏
       search: {
-        //maxAge: 86400000, // 过期时间，单位毫秒，默认一天
         paths: 'auto',
         placeholder: '搜索',
         noData: '找不到结果',
-        // 搜索标题的最大程级, 1 - 6
         depth: 3,
       },
       // plugins: [
       //   EditOnGithubPlugin.create('https://github.com/Snailclimb/JavaGuide/blob/master/')
       // ],
-
+	  // 字数统计
+      count: {
+        countable: true,
+        fontsize: '0.9em',
+        color: 'rgb(90,90,90)',
+        language: 'chinese'
+      }
     }
   </script>
   <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
