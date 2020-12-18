@@ -245,7 +245,7 @@ private Example example;
 3. 如果指定type属性，则从容器中查找类型唯一匹配的bean装配，找不到或者找到多个抛出异常
 4. 如果都不指定，则自动按照byName方式装配，如果没有匹配，则回退一个原始类型进行匹配，如果匹配则自动装配。
 
-**简要对比表格 ** 
+**两者之间的差异**
 
 | 注解对比 | `@Resource` | `@Autowire` |
 | -------- | ----------- | ----------- |
@@ -409,6 +409,16 @@ public interface PlatformTransactionManager extends TransactionManager {
 
 在`@Transactional`注解中如果不配置`rollbackFor`属性,那么事务只会在遇到`RuntimeException`的时候才会回滚,加上`rollbackFor=Exception.class`,可以让事务在遇到非运行时异常时也回滚。
 
-关于 `@Transactional ` 注解推荐阅读的文章：
+**@Transactional 注解的属性信息**
 
-- [透彻的掌握 Spring 中@transactional 的使用](https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/index.html)
+| 属性名           | 说明                                                         |
+| :--------------- | :----------------------------------------------------------- |
+| name             | 当在配置文件中有多个 TransactionManager , 可以用该属性指定选择哪个事务管理器。 |
+| propagation      | 事务的传播行为，默认值为 REQUIRED。                          |
+| isolation        | 事务的隔离度，默认值采用 DEFAULT。                           |
+| timeout          | 事务的超时时间，默认值为-1。如果超过该时间限制但事务还没有完成，则自动回滚事务。 |
+| read-only        | 指定事务是否为只读事务，默认值为 false；为了忽略那些不需要事务的方法，比如读取数据，可以设置 read-only 为 true。 |
+| rollback-for     | 用于指定能够触发事务回滚的异常类型，如果有多个异常类型需要指定，各类型之间可以通过逗号分隔。 |
+| no-rollback- for | 抛出 no-rollback-for 指定的异常类型，不回滚事务              |
+
+关于 `@Transactional ` 注解推荐阅读的文章：[透彻的掌握 Spring 中@transactional 的使用](https://www.ibm.com/developerworks/cn/java/j-master-spring-transactional-use/index.html)
