@@ -2,7 +2,7 @@
 
 下图对应的是 Spring4.x 版本。目前最新的5.x版本中 Web 模块的 Portlet 组件已经被废弃掉，同时增加了用于异步响应式处理的 WebFlux 组件。
 
-![image-20201216191730698](images/image-20201216191730698.png)
+![image-20201216191730698](https://jason-01.oss-cn-hangzhou.aliyuncs.com/public/image/markdown/image-20201216191730698.png)
 
 - **Spring Core：** Spring 其他所有的功能都需要依赖于该类库。主要提供 IOC 依赖注入功能。
 - **Spring Aspects** ： 该模块为与AspectJ的集成提供支持。
@@ -30,7 +30,7 @@ IoC（Inverse of Control 控制反转）是一种**设计思想**，就是 **将
 
 [参考](https://www.zhihu.com/question/23277575/answer/169698662)可知**依赖倒置原则（Dependency Inversion Principle ）**、**控制反转( Inversion of Control )**、**依赖注入（Dependency Injection）**、**控制反转容器（IoC Container）**之间的关系如下：
 
-![image-20201216202424481](images/image-20201216202424481.png)
+![image-20201216202424481](https://jason-01.oss-cn-hangzhou.aliyuncs.com/public/image/markdown/image-20201216202424481.png)
 
 **依赖倒置原则**（Dependence Inversion Principle）是程序要依赖于抽象接口，不要依赖于具体实现。
 
@@ -44,7 +44,7 @@ IoC（Inverse of Control 控制反转）是一种**设计思想**，就是 **将
 
 IoC容器帮助创建多依赖实例过程：
 
-![image-20201216204425679](images/image-20201216204425679.png)
+![image-20201216204425679](https://jason-01.oss-cn-hangzhou.aliyuncs.com/public/image/markdown/image-20201216204425679.png)
 
 与手动创建实例不同的是，IoC容器使用依赖注入实现多依赖实例的创建。
 
@@ -54,7 +54,7 @@ AOP(Aspect-Oriented Programming:面向切面编程)能够将那些与业务无�
 
 在软件开发中，分布于应用多处的功能被称为 **横切关注点**，例如：日志、安全、事务管理等。将这些横切关注点与业务逻辑相分离（持久层数据的处理等）正是**面向切面编程（AOP）**所要解决的。将横切关注点模块化为特殊的类时，这些类被成为**切面**。
 
-![image-20201217114357220](images/image-20201217114357220.png)
+![image-20201217114357220](https://jason-01.oss-cn-hangzhou.aliyuncs.com/public/image/markdown/image-20201217114357220.png)
 
 先了解一下AOP的专业术语：
 
@@ -67,7 +67,7 @@ AOP(Aspect-Oriented Programming:面向切面编程)能够将那些与业务无�
 
 下图为在一个或多个连接点上，将切面的功能（通知）织入到程序的执行过程中。总的来说：通知包含了需要用于多个应用对象的横切行为；连接点是程序执行过程中能够应用通知的所有点；切点定义了通知被应用的具体位置（在哪些连接点）。**其中关键的概念是切点定义了哪些连接点会得到通知**。
 
-![image-20201217152632816](images/image-20201217152632816.png)
+![image-20201217152632816](https://jason-01.oss-cn-hangzhou.aliyuncs.com/public/image/markdown/image-20201217152632816.png)
 
 **Springboot中定义日志切面**
 
@@ -272,7 +272,7 @@ private Example example;
 - 当要销毁 Bean 的时候，如果 Bean 实现了 `DisposableBean` 接口，执行 `destroy()` 方法。
 - 当要销毁 Bean 的时候，如果 Bean 在配置文件中的定义包含 destroy-method 属性，执行指定的方法。
 
-![image-20201217153658324](images/image-20201217153658324.png)
+![image-20201217153658324](https://jason-01.oss-cn-hangzhou.aliyuncs.com/public/image/markdown/image-20201217153658324.png)
 
 # SpringMVC工作原理
 
@@ -306,6 +306,82 @@ private Example example;
 
 # Spring事务
 
+## 事务的四大特性
+
+1. **原子性**（Atomicity）：事务中所有操作是不可再分割的原子单位。事务中所有操作要么全部执行成功，要么全部执行失败。
+2. **一致性**（Consistency）：事务执行后，数据库状态与其它业务规则保持一致。如转账业务，无论事务执行成功与否，参与转账的两个账号余额之和应该是不变的。
+3.  **隔离性**（Isolation）：隔离性是指在并发操作中，不同事务之间应该隔离开来，使每个并发中的事务不会相互干扰。
+4. **持久性**（Durability）：一旦事务提交成功，事务中所有的数据操作都必须被持久化到数据库中，即使提交事务后，数据库马上崩溃，在数据库重启时，也必须能保证通过某种机制恢复数据。
+
+## 事务的隔离级别
+
+数据库事务的隔离级别有4种，由低到高分别为**Read uncommitted** 、**Read committed** 、**Repeatable read** 、
+**Serializable** 。而且，在事务的并发操作中可能会出现脏读，不可重复读，幻读，事务丢失。下方为事务中专业名词解释：
+
+- **脏读：**（读取未提交的事务，然后该事物回滚了）事务A读取了事务B中尚未提交的数据。如果事务B回滚，则A读取使用了错误的数据。
+- **不可重复读：**（读取已提交的新事物，针对更新操作）不可重复读是指在对于数据库中的某个数据，一个事务范围内多次査询却返回了不同的数据值，这是由于在查询间隔，该数据被另一个事务修改并提交了。
+- **幻读：**（读取已提交的新事物，针对增删操作）在事务A多次读取构成中，事务B对数据进行了新增（删除）操作，导致事务A多次读取的数据不一致。
+- **第一类事务丢失：**（又称回滚丢失）对于第一类事物丢失，就是比如A和B同时在执行一个数据，然后B事物已经提交了，然后A事物回滚了，这样B事物的操作就因A事物回滚而丢失了。
+- **第二类事务丢失：**（又称覆盖丢失）对于第二类事物丟失，就是A和B一起执行一个数据，两个同时取到一个数据，然后B事物首先提交，但是A事物加下来又提交，这样就覆盖了B事物。
+
+**事务的隔离级别：**
+
+- **Read uncommitted：**读未提交，顾名思义，就是一个事务可以读取另一个未提交事务的数据。 **可能会导致脏读、幻读或不可重复读**
+- **Read committed：** 读提交，顾名思义，就是一个事务要等另一个事务提交后才能读取数据。**可以阻止脏读，但是幻读或不可重复读仍有可能发生**
+- **Repeatable read：**重复读，就是在开始读取数据（事务开启）时，不再允许修改操作。 **可以阻止脏读和不可重复读，但幻读仍有可能发生。**
+- **Serializable：**Serializable 是最高的事务隔离级别，在该级别下，事务串行化顺序执行，**可以避免脏读、不可重复读与幻读。**但是这种事务隔离级别效率低下，比较耗数据库性能，一般不使用。
+
+大多数数据库默认的事务隔离级别是Read committed，比如Sql Server , Oracle。**Mysql的默认隔离级别是Repeatable read。**引自：https://www.bilibili.com/video/BV1EE411p7dD
+
+## Spring 事务中的隔离级别有哪几种?
+
+**TransactionDefinition 接口中定义了五个表示隔离级别的常量：**
+
+- **TransactionDefinition.ISOLATION_DEFAULT:** 使用后端数据库默认的隔离级别，MySQL默认采用的 REPEATABLE_READ隔离级别 Oracle 默认采用的 READ_COMMITTED隔离级别.
+- **TransactionDefinition.ISOLATION_READ_UNCOMMITTED:** 最低的隔离级别，允许读取尚未提交事务的数据，**可能会导致脏读、幻读或不可重复读**
+- **TransactionDefinition.ISOLATION_READ_COMMITTED:** 允许读取并发事务已经提交的数据，**可以阻止脏读，但是幻读或不可重复读仍有可能发生**
+- **TransactionDefinition.ISOLATION_REPEATABLE_READ:** 对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，**可以阻止脏读和不可重复读，但幻读仍有可能发生。**
+- **TransactionDefinition.ISOLATION_SERIALIZABLE:** 最高的隔离级别，完全服从ACID的隔离级别。所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，**该级别可以防止脏读、不可重复读以及幻读**。但是这将严重影响程序的性能。通常情况下也不会用到该级别。
+
+
+
+## Spring 事务中哪几种事务传播行为?
+
+**什么是事务的传播行为：**假如批量进行十次转账操作是（或不是）一个事务，而转账操作是（或不是）一个事务。当批量转账执行到第四次转账时，批量操作或转账操作出现异常，那么批量转账操作是否需要回滚的，转账操作是否需要回滚。传播行为主要就是解决这类事件。
+
+**支持当前事务的情况：**
+
+- **TransactionDefinition.PROPAGATION_REQUIRED：** 如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。
+- **TransactionDefinition.PROPAGATION_SUPPORTS：** 如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式继续运行。
+- **TransactionDefinition.PROPAGATION_MANDATORY：** 如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常。（mandatory：强制性）
+
+**不支持当前事务的情况：**
+
+- **TransactionDefinition.PROPAGATION_REQUIRES_NEW：** 创建一个新的事务，如果当前存在事务，则把当前事务挂起。
+- **TransactionDefinition.PROPAGATION_NOT_SUPPORTED：** 以非事务方式运行，如果当前存在事务，则把当前事务挂起。
+- **TransactionDefinition.PROPAGATION_NEVER：** 以非事务方式运行，如果当前存在事务，则抛出异常。
+
+**其他情况：**
+
+- **TransactionDefinition.PROPAGATION_NESTED：** 如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于TransactionDefinition.PROPAGATION_REQUIRED。
+
+
+
+## Spring中对事务两种支持方式
+
+Spring支持编程式事务管理以及声明式事务管理两种方式。
+
+1. **编程式事务管理**：编程式事务管理是侵入性事务管理，使用TransactionTemplate或者直接使用PlatformTransactionManager，对于编程式事务管理，Spring推荐使用TransactionTemplate。
+
+2. **声明式事务管理**：声明式事务管理建立在AOP之上，其本质是对方法前后进行拦截，然后在目标方法开始之前创建或者加入一个事务，执行完目标方法之后根据执行的情况提交或者回滚。
+
+**编程式事务**每次实现都要单独实现，但业务量大功能复杂时，使用编程式事务无疑是痛苦的，而**声明式事务**不同，声明式事务属于无侵入式，不会影响业务逻辑的实现，只需要在配置文件中做相关的事务规则声明或者通过注解的方式，便可以将事务规则应用到业务逻辑中。
+
+**声明事务的方式有两种：**
+
+1. 基于XML的声明式事务
+2. 基于注解的声明式事务
+
 Spring并不直接管理事务，而是提供了多种事务管理器，他们将事务管理的职责委托给 Hibernate或者JDBC等持久化机制所提供的相关平台框架的事务来实现。
 Spring事务管理器的接口是org.springframework transaction.PlatformTransaction Manager，通过这个接口Spring为各个平台如JDBC、Hibernate等都提供了对应的事务管理器，但是具体的实现就是各个平台自己的事情。
 
@@ -324,39 +400,6 @@ public interface PlatformTransactionManager extends TransactionManager {
     void rollback(TransactionStatus var1) throws TransactionException;
 }
 ```
-
-**声明事务的方式有两种：**
-
-1. 基于XML的声明式事务
-2. 基于注解的声明式事务
-
-## Spring 事务中的隔离级别有哪几种?
-
-**TransactionDefinition 接口中定义了五个表示隔离级别的常量：**
-
-- **TransactionDefinition.ISOLATION_DEFAULT:** 使用后端数据库默认的隔离级别，Mysql 默认采用的 REPEATABLE_READ隔离级别 Oracle 默认采用的 READ_COMMITTED隔离级别.
-- **TransactionDefinition.ISOLATION_READ_UNCOMMITTED:** 最低的隔离级别，允许读取尚未提交的数据变更，**可能会导致脏读、幻读或不可重复读**
-- **TransactionDefinition.ISOLATION_READ_COMMITTED:** 允许读取并发事务已经提交的数据，**可以阻止脏读，但是幻读或不可重复读仍有可能发生**
-- **TransactionDefinition.ISOLATION_REPEATABLE_READ:** 对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，**可以阻止脏读和不可重复读，但幻读仍有可能发生。**
-- **TransactionDefinition.ISOLATION_SERIALIZABLE:** 最高的隔离级别，完全服从ACID的隔离级别。所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，**该级别可以防止脏读、不可重复读以及幻读**。但是这将严重影响程序的性能。通常情况下也不会用到该级别。
-
-## Spring 事务中哪几种事务传播行为?
-
-**支持当前事务的情况：**
-
-- **TransactionDefinition.PROPAGATION_REQUIRED：** 如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。
-- **TransactionDefinition.PROPAGATION_SUPPORTS：** 如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式继续运行。
-- **TransactionDefinition.PROPAGATION_MANDATORY：** 如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常。（mandatory：强制性）
-
-**不支持当前事务的情况：**
-
-- **TransactionDefinition.PROPAGATION_REQUIRES_NEW：** 创建一个新的事务，如果当前存在事务，则把当前事务挂起。
-- **TransactionDefinition.PROPAGATION_NOT_SUPPORTED：** 以非事务方式运行，如果当前存在事务，则把当前事务挂起。
-- **TransactionDefinition.PROPAGATION_NEVER：** 以非事务方式运行，如果当前存在事务，则抛出异常。
-
-**其他情况：**
-
-- **TransactionDefinition.PROPAGATION_NESTED：** 如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于TransactionDefinition.PROPAGATION_REQUIRED。
 
 ## @Transactional(rollbackFor = Exception.class)注解了解吗？
 
