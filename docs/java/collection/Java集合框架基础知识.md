@@ -158,6 +158,17 @@ JDK1.8 以后的 `HashMap` 在解决哈希冲突时有了较大的变化，**当
 
 ![image-20200902164809345](images/image-20200902164809345.png)
 
+**红黑树的特点：**
+
+- 根节点是 **黑色**。
+
+- 每个节点要么是 **黑色**，要么是 `红色`。
+- 所有的叶结点都是空结点，并且是 `黑色` 的。
+- 如果一个结点是 `红色`的，那么它的子结点都是 **黑色** 的 
+- 任意一个结点触发，到其子孙结点的每条简单路径都包含相同数目的 **黑色** 结点 
+
+
+
 ### HashMapde 的基本属性值
 
 ```java
@@ -393,7 +404,9 @@ HashMap对扩容后重新索引元素位置方法如下：
 `ConcurrentHashMap` 和 `Hashtable` 的区别主要体现在实现线程安全的方式上不同。
 
 - **底层数据结构：** JDK1.7 的 `ConcurrentHashMap` 底层采用 **分段的数组+链表** 实现，JDK1.8 采用的数据结构跟 `HashMap1.8` 的结构一样，数组+链表/红黑二叉树。`Hashtable` 和 JDK1.8 之前的 `HashMap` 的底层数据结构类似都是采用 **数组+链表** 的形式，数组是 HashMap 的主体，链表则是主要为了解决哈希冲突而存在的；
-- **实现线程安全的方式（重要）：** ① **在 JDK1.7 的时候，`ConcurrentHashMap`（分段锁）** 对整个桶数组进行了分割分段(`Segment`)，每一把锁只锁容器其中一部分数据，多线程访问容器里不同数据段的数据，就不会存在锁竞争，提高并发访问率。 **到了 JDK1.8 的时候已经摒弃了 `Segment` 的概念，而是直接用 `Node` 数组+链表+红黑树的数据结构来实现，并发控制使用 `synchronized` 和 CAS 来操作。（JDK1.6 以后 对 `synchronized` 锁做了很多优化）** 整个看起来就像是优化过且线程安全的 `HashMap`，虽然在 JDK1.8 中还能看到 `Segment` 的数据结构，但是已经简化了属性，只是为了兼容旧版本；② **`Hashtable`(同一把锁)** :使用 `synchronized` 来保证线程安全，效率非常低下。当一个线程访问同步方法时，其他线程也访问同步方法，可能会进入阻塞或轮询状态，如使用 put 添加元素，另一个线程不能使用 put 添加元素，也不能使用 get，竞争会越来越激烈效率越低。
+- **实现线程安全的方式（重要）：** 
+  - **在 JDK1.7 的时候，`ConcurrentHashMap`（分段锁）** 对整个桶数组进行了分割分段(`Segment`)，每一把锁只锁容器其中一部分数据，多线程访问容器里不同数据段的数据，就不会存在锁竞争，提高并发访问率。 **到了 JDK1.8 的时候已经摒弃了 `Segment` 的概念，而是直接用 `Node` 数组+链表+红黑树的数据结构来实现，并发控制使用 `synchronized` 和 CAS 来操作。（JDK1.6 以后 对 `synchronized` 锁做了很多优化）** 整个看起来就像是优化过且线程安全的 `HashMap`，虽然在 JDK1.8 中还能看到 `Segment` 的数据结构，但是已经简化了属性，只是为了兼容旧版本；
+  -  **`Hashtable`(同一把锁)** ：使用 `synchronized` 来保证线程安全，效率非常低下。当一个线程访问同步方法时，其他线程也访问同步方法，可能会进入阻塞或轮询状态，如使用 put 添加元素，另一个线程不能使用 put 添加元素，也不能使用 get，竞争会越来越激烈效率越低。
 - 下方为 Hashtable 与 ConcurrentHashMap 的数据结构示意图
 
 ![image-20201219160650566](images/image-20201219160650566.png)
@@ -406,9 +419,12 @@ HashMap对扩容后重新索引元素位置方法如下：
 
 ![image-20201219161544266](images/image-20201219161544266.png)
 
-引自：https://snailclimb.gitee.io/javaguide
+JDK8 的 `ConcurrentHashMap` 不在是 **Segment 数组 + HashEntry 数组 + 链表**，而是 **Node 数组 + 链表 / 红黑树**。不过，Node 只能用于链表的情况，红黑树的情况需要使用 **`TreeNode`**。当冲突链表达到一定长度时，链表会转换成红黑树。引自：https://snailclimb.gitee.io/javaguide
 
-JDK8 的 `ConcurrentHashMap` 不在是 **Segment 数组 + HashEntry 数组 + 链表**，而是 **Node 数组 + 链表 / 红黑树**。不过，Node 只能用于链表的情况，红黑树的情况需要使用 **`TreeNode`**。当冲突链表达到一定长度时，链表会转换成红黑树。
+主要的区别可以概括为：
+
+- `ConcurrentHashMap` 是一个并发散列映射表，设计模式是非阻塞的，它允许完全并发的读取，并且支持给定数量的并发更新。在更新时会局部锁住某部分数据，但不会把整个表都锁住。同步读取操作则是完全非阻塞的。好处是在保证合理的同步前提下，效率很高。坏处是严格来说读取操作不能保证反映最近的更新。
+- `HashTable` 是使用一个全局的锁来同步不同线程间的并发访问，同一时间点，只能有一个线程持有锁，也就是说在同一时间点，只能有一个线程能访问容器，这虽然保证多线程间的安全并发访问，但同时也导致对容器的访问变成串行化的了。
 
 ## ConcurrentHashMap 线程安全与底层实现
 
@@ -435,9 +451,9 @@ static class Segment<K,V> extends ReentrantLock implements Serializable {
 
 # Set 接口的实现类
 
-`HashSet` 是 `Set` 接口的主要实现类 ，`HashSet` 的底层是 `HashMap`，线程不安全的，可以存储 null 值；
+`HashSet` 是 `Set` 接口的主要实现类 ，`HashSet` 的底层是 `HashMap`，线程不安全的，可以存储 null 值。
 
-`LinkedHashSet` 是 `HashSet` 的子类，能够按照添加的顺序遍历；
+`LinkedHashSet` 是 `HashSet` 的子类，添加到`LinkedHashSet`集合中的元素可以被顺序访问。
 
 `TreeSet` 底层使用红黑树，能够按照添加元素的顺序进行遍历，排序的方式有自然排序和定制排序。
 
@@ -448,7 +464,7 @@ static class Segment<K,V> extends ReentrantLock implements Serializable {
 **`hashCode()`与 `equals()` 的相关规定：**
 
 1. 如果两个对象相等，则 `hashcode` 一定也是相同的
-2. 两个对象相等,对两个 `equals()` 方法返回 true
+2. 两个对象相等，对两个 `equals()` 方法返回 true
 3. 两个对象有相同的 `hashcode` 值，它们也不一定是相等的
 4. 综上，`equals()` 方法被覆盖过，则 `hashCode()` 方法也必须被覆盖
 5. `hashCode() `的默认行为是对堆上的对象产生独特值。如果没有重写 `hashCode()`，则该 class 的两个对象无论如何都不会相等（即使这两个对象指向相同的数据）。
