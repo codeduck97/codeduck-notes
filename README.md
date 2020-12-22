@@ -11,6 +11,8 @@
 - [数据结构与算法](#数据结构与算法)
   - [数据结构](#数据结构)
   - [算法习题](#算法习题)
+- [计算机网络](#计算机网络)
+- [计算及操作系统](#计算机操作系统)
 - [开发框架](#开发框架)
   - [Spring/SpringBoot](#Spring/SpringBoot)
 
@@ -48,10 +50,24 @@
 
 ### 算法习题
 
-1. [剑指offer](docs/data-structures&algorithm/剑指offer算法笔记.md)
-2. [LeetCode](docs/data-structures&algorithm/algorithm/README.md)
+1. [剑指offer](docs/data-structures&algorithm/algorithm/剑指offer算法笔记.md)
+2. [LeetCode基础算法总结](docs/data-structures&algorithm/algorithm/LeetCode基础算法总结.md)
+3. [排序算法总结](docs/data-structures&algorithm/algorithm/排序算法总结.md)
+4. [查找算法总结](docs/data-structures&algorithm/algorithm/查找算法总结.md)
 
+## 计算机网络
 
+1. 计算机网络传笔记送门(待整理……)
+2. [DNS域名解析](docs/computer-network/DNS域名解析.md)
+3. [动态主机配置协议DHCP](docs/computer-network/动态主机配置协议DHCP.md)
+4. [计算机网络运输层](docs/computer-network/计算机网络-运输层.md)
+5. [IP协议](docs/computer-network/IP协议.md)
+6. [Mac地址及Mac帧](docs/computer-network/Mac地址及Mac帧.md)
+7. [子网及子网掩码](docs/computer-network/子网及子网掩码与IP地址.md)
+
+## 计算机操作系统
+
+1. [操作系统笔记传送门](docs/computer-os/计算机操作系统.md)
 
 ## 开发框架
 
