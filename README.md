@@ -28,6 +28,9 @@
 
 ### 多线程并发
 
+1. [线程创建的四种方式](docs/java/juc/创建线程的几种方式.md)
+2. [JUC笔记总结](docs/java/juc/JUC笔记总结.md)
+
 ### JVM虚拟机
 
 0. [编译openjdk11](docs/java/jvm/0.编译openjdk11.md)
