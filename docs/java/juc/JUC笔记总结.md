@@ -134,7 +134,7 @@ public class Demo11 {
 
 运行结果分析：从上述结果可以看出 写线程 对 COUNT 的修改读线程并不能感知到，为什么呢？
 
-因为 writer 线程在工作内存中修改了COUNT 的值，即使它刷回主内存了，但是 reader 线程在此之前已经从主内存获取了COUNT 的值（因为线程获取CPU时间片不确定性，这个值可能是0，也可能是被 writer 修改后的值，但 writer 线程是每隔0.5毫秒才会去修改值，所以reader获取到的 COUNT 的值一般不会是 writer 修改的最终值5），并保存到了 reader 线程的工作内存中。reader 线程通过 while不断的轮询判断 value 和 COUNT 的值是否相等，但是由于 reader线程工作内存中已经有 COUNT 的值的拷贝了，所以 reader 线程并不会重新从主内存中获取被 writer 修改后的 COUNT的值，reader 线程里 while 条件一直成立，这就是为什么 reader 线程不会正常停止并且没有输出修改后的值的原因。
+因为 writer 线程在工作内存中修改了COUNT 的值，即使它刷回主内存了，但是 reader 线程在此之前已经从主内存获取了COUNT 的值（因为线程获取CPU时间片不确定性，这个值可能是0，也可能是被 writer 修改后的值，但 writer 线程是每隔 0.5 毫秒才会去修改值，所以 reader 获取到的 COUNT 的值一般不会是 writer 修改的最终值5），并保存到了 reader 线程的工作内存中。reader 线程通过 while不断的轮询判断 value 和 COUNT 的值是否相等，但是由于 reader线程工作内存中已经有 COUNT 的值的拷贝了，所以 reader 线程并不会重新从主内存中获取被 writer 修改后的 COUNT的值，reader 线程里 while 条件一直成立，这就是为什么 reader 线程不会正常停止并且没有输出修改后的值的原因。
 
 修改上面的例子，**将COUNT成员变量使用volatile关键字修饰**，运行结果如下：
 
@@ -266,7 +266,7 @@ volatile可以保证修改的值能够马上更新到主内存，其他线程也
 
 所以上面的例子中，可能出现下面这种情况：
 
-thread1 和thread2 同时获取了 value 的值，比如为 100。thread1 执行了+1 操作，然后写回主内存，这个时候 thread2 刚好执行完use操作（+1），准备执行assign（将+1后的值写回工作内存对应的变量中）操作。虽然这时候thread2工作内存中 value 值的拷贝无效了（因为volatile的特性），但是 thread2 已经执行完 +1 操作了，它并不需要再从主内存中获取 value 的值，所以 thread2 可以顺利地将 +1 后的值赋值给工作内存中的变量，然后刷回主存。这就是为什么上面的累加结果可能会小于1000的原因。
+thread1 和 thread2 同时获取了 value 的值，比如为 100。thread1 执行了+1 操作，然后写回主内存，这个时候 thread2 刚好执行完use操作（+1），准备执行assign（将+1后的值写回工作内存对应的变量中）操作。虽然这时候thread2工作内存中 value 值的拷贝无效了（因为volatile的特性），但是 thread2 已经执行完 +1 操作了，它并不需要再从主内存中获取 value 的值，所以 thread2 可以顺利地将 +1 后的值赋值给工作内存中的变量，然后刷回主存。这就是为什么上面的累加结果可能会小于1000的原因。
 
 # Java 并发容器
 
@@ -1105,46 +1105,213 @@ protected final int getState() {
 protected final void setState(int newState) {
         state = newState;
 }
-// 原子地（CAS操作）将同步状态值设置为给定值update如果当前同步状态的值等于expect（期望值）
+//  如果当前同步状态的值等于expect（期望值），则原子地（CAS操作）将同步状态值设置为给定值update
 protected final boolean compareAndSetState(int expect, int update) {
         return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
 }
 ```
-
-## AQS 对资源的共享方式
-
-**AQS定义两种资源共享方式：**
-
-1. Exclusive（独占式）：同一时刻只有一个线程能够获取资源，而其他要获取该资源的线程只能进入同步队列中等待，如ReentrantLock。
-2. Share（共享式）：同一时刻多个线程能否同时获取到资源的同步状态，如Semaphore、CountDownLatch。
 
 不同的自定义同步器争用共享资源的方式也不同。**自定义同步器在实现时只需要实现共享资源state的获取与释放方式即可**，至于具体线程等待队列的维护（如获取资源失败入队/唤醒出队等），AQS已经在顶层实现好了。自定义同步器实现时主要实现以下几种方法：
 
 - isHeldExclusively()：该线程是否正在独占资源。只有用到 condition才需要去实现它。
 - tryAcquire(int)：独占方式。尝试获取资源，成功则返回 true，失败则返回 false。
 - tryRelease(int)：独占方式。尝试释放资源，成功则返回 true，失败则返回 false。
-- tryAcquireShared(int)：共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。
+- tryAcquireShared(int)：共享方式。尝试获取资源，返回值小于 0 表示获取同步状态失败；大于等于 0 表示获取成功。
 - tryReleaseShared(int)：共享方式。尝试释放资源，如果释放后允许唤醒后续等待结点返回true，否则返回false。
 
-### 独占式
+## 同步器队列与锁的关系
 
-独占式可分为公平锁和非公平锁，ReentrantLock 同时支持两种锁，下面以 ReentrantLock 对这两种锁的定义做介绍：
+同步器队列是实现锁的关键，在锁的实现中聚合同步器队列，利用同步器实现锁的语义。
 
-- 公平锁：按照线程在队列中的排队顺序，先到者先拿到锁
-- 非公平锁：当线程要获取锁时，先通过两次 CAS 操作去抢锁，如果没抢到，当前线程再加入到队列中等待唤醒。
+锁是面向使用者的，它定义了使用者与锁交互的接口。
 
-公平锁和非公平锁只有两处不同：
+同步器队列面向的是锁的实现者，它简化了锁的实现方式，屏蔽了底层原理。
 
-1. 非公平锁在调用 lock 后，首先就会调用 CAS 进行一次抢锁，如果这个时候恰巧锁没有被占用，那么直接就获取到锁返回了。
-2. 非公平锁在 CAS 失败后，和公平锁一样都会进入到 tryAcquire 方法，在 tryAcquire 方法中，如果发现锁这个时候被释放了（state == 0），非公平锁会直接 CAS 抢锁，但是公平锁会判断等待队列是否有线程处于等待状态，如果有则不去抢锁，乖乖排到后面。
+## 同步器队列的实现分析
 
-### 共享式
+同步器是如何完成线程同步的？主要包括：同步队列、独占式同步状态获取与释放、共享式同步状态获取与释放、超时获取同步状态等同步器的核心数据结构与模板方法。
 
-多个线程可同时执行，如 Semaphore/CountDownLatch。Semaphore、CountDownLatCh、 CyclicBarrier、ReadWriteLock 我们都会在后面讲到。
+### 同步队列
 
-ReentrantReadWriteLock 可以看成是组合式，因为 ReentrantReadWriteLock 也就是读写锁允许多个线程同时对某一资源进行读。
+同步器依赖内部的同步队列（FIFO双向队列）来完成同步状态管理。当前线程获取同步状态失败时，同步器会将当前线程以及等待状态信息构成一个节点，并将其加入到同步队列尾部，同时会阻塞当前线程。当同步状态释放时，会把头节点中的线程唤醒，使其再次尝试获取同步状态。
 
-不同的自定义同步器争用共享资源的方式也不同。自定义同步器在实现时只需要实现共享资源 state 的获取与释放方式即可，至于具体线程等待队列的维护（如获取资源失败入队/唤醒出队等），AQS 已经在上层已经帮我们实现好了。
+![image-20201223205915256](images/image-20201223205915256.png)
+
+同步器：包含了两个节点的类型的引用，一个指向头节点，一个指向尾结点。
+
+情景一：当一个线程没有获取到同步状态时，则该线程会被构造为节点加入到队列尾部。加入过程必须保证线程安全。因此同步器提供了一个基于CAS的设置尾结点的方法——compareAndSetTail(Node expect，Node update)，只有尾结点和expect节点是同一个节点时，才将update节点设置为尾结点，并更新tail的引用。
+
+![image-20201223205937179](images/image-20201223205937179.png)
+
+
+
+情节二：同步队列遵循FIFO，头节点是获取同步状态成功的节点，当它执行完毕，释放同步状态时，将会唤醒后继节点。后继节点会在获取同步状态成功后，将自己设置为头节点。
+
+![image-20201223210400191](images/image-20201223210400191.png)
+
+PS：设置头节点是通过获取同步状态成功的线程完成的，由于只有一个线程会成功获取同步状态，因此设置头节点并不需要CAS操作，只需改变head的引用即可。
+
+### 独占式同步状态获取与释放
+
+首先来看一下独占式的情况下，如何将一个节点加入队列，并获取同步状态。
+
+```java
+public final void acquire(int arg) {
+    if (!tryAcquire(arg) && acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+        selfInterrupt();
+}
+```
+
+上述代码主要完成了：同步状态获取、独占式节点构造、加入同步队列，在同步队列中自旋。
+
+代码执行逻辑：
+
+1. 通过`tryAcquire()`同步状态，如果没有获取到同步状态，返回false（同一时刻只有一个线程能够获取到同步状态）。
+2. 构造独占节点（独占式节点`Node.EXCLUSIVE`）。
+3. 通过`addWaiter(Node node)`将独占节点添加到队列尾部。
+4. 调用`acquireQueued(Node node，int arg)`使得节点以“死循环”的方式获取同步状态。如果获取不到，则阻塞节点中的线程。被阻塞的线程需要前驱节点的出队或阻塞线程被中断实现。
+
+自旋的节点什么时候可以获取同步状态？
+
+1. 头节点是成功获取同步状态的节点。当头节点释放同步状态后，会唤醒其后继节点，后继节点被唤醒后需要检查自己的前驱节点是否为头节点。
+2. 节点自旋的状态如下图所示，自旋节点仅需判断它的前驱节点是否为头节点，如果是，则可以获取同步状态。
+
+![image-20201223213721223](images/image-20201223213721223.png)
+
+**自旋获取同步状态源码：**
+
+```java
+final boolean acquireQueued(final Node node, int arg) {
+    boolean failed = true;
+    try {
+        boolean interrupted = false;
+        for (;;) {
+            final Node p = node.predecessor();		// 获取前驱节点
+            if (p == head && tryAcquire(arg)) {		// 如果前驱节点为头节点 并且 获取到同步状态
+                setHead(node);						// 将该节点设置为头节点
+                p.next = null; // help GC			// 头节点的后驱引用设置为空，GC自动回收
+                failed = false;		
+                return interrupted;
+            }
+            if (shouldParkAfterFailedAcquire(p, node) &&
+                parkAndCheckInterrupt())
+                interrupted = true;
+        }
+    } finally {
+        if (failed)
+            cancelAcquire(node);
+    }
+}
+```
+
+**头节点释放同步状态源码：**
+
+```java
+public final boolean release(int arg) {
+    if (tryRelease(arg)) {
+        Node h = head;
+        if (h != null && h.waitStatus != 0)
+            unparkSuccessor(h);				// 该方法会唤醒后继节点
+        return true;
+    }
+    return false;
+}
+```
+
+### 共享式同步状态获取与释放
+
+**共享式获取**与独占式获取最主要的区别在于**同一时刻能否有多个线程同时获取到同步状态。**
+
+共享式与独占式获取资源对比如下图所示：
+
+![image-20201223215823024](images/image-20201223215823024.png)
+
+以文件读写为例：
+
+1. 如果一个线程在读取资源，则同时刻写线程均被阻塞，而读线程能够同时进行。
+2. 如果写线程对资源独占式访问，则同一时刻其他所有线程将被阻塞。
+
+调用同步器的`acquireShared()`方法可以共享式的获取同步状态，源码如下：
+
+```java
+// 共享式的获取同步状态
+public final void acquireShared(int arg) {
+    if (tryAcquireShared(arg) < 0)		// 返回值小于0 表示获取同步状态失败
+        doAcquireShared(arg);			// 自旋获取同步状态
+}
+
+// 获取共享状态
+private void doAcquireShared(int arg) {
+    final Node node = addWaiter(Node.SHARED);
+    boolean failed = true;
+    try {
+        boolean interrupted = false;
+        for (;;) {
+            final Node p = node.predecessor();		// 获取当前节点的前驱节点
+            if (p == head) {						// 如果前驱节点为头结点
+                int r = tryAcquireShared(arg);		// 尝试获取同步状态，返回值大于等于0表示获取成功
+                if (r >= 0) {						
+                    setHeadAndPropagate(node, r);	// 设置头节点
+                    p.next = null; // help GC		// 将前驱节点回收
+                    if (interrupted)
+                        selfInterrupt();
+                    failed = false;
+                    return;							// 退出自旋
+                }
+            }
+            if (shouldParkAfterFailedAcquire(p, node) &&
+                parkAndCheckInterrupt())
+                interrupted = true;
+        }
+    } finally {
+        if (failed)
+            cancelAcquire(node);
+    }
+}
+```
+
+共享式获取也需要释放同步状态，通过调用`releaseShared(int arg)`方法释放，源码如下：
+
+```java
+public final boolean releaseShared(int arg) {
+    if (tryReleaseShared(arg)) {
+        doReleaseShared();
+        return true;
+    }
+    return false;
+}
+```
+
+该方法在释放同步状态后会唤醒后续处于等待状态的节点。
+
+## 哪些数据结构使用了AQS
+
+### ReentrantLock
+
+在ReentrantLock中，stste表示获取锁的线程数，假如state=0，表示还没有线程获取锁，1表示有线程获取了锁。大于1表示重入锁的数量
+
+```java
+public class ReentrantLock implements Lock, java.io.Serializable {
+    private static final long serialVersionUID = 7373984872572414699L;
+
+    private final Sync sync;
+
+    /**
+     * Base of synchronization control for this lock. Subclassed
+     * into fair and nonfair versions below. Uses AQS state to
+     * represent the number of holds on the lock.
+     */
+    abstract static class Sync extends AbstractQueuedSynchronizer {
+        private static final long serialVersionUID = -5179523762034025860L;
+        ……
+    }
+    ……
+}
+```
+
+### CountDownLatch
+
+### Semaphore
 
 # Semaphore（信号量）
 
@@ -1199,7 +1366,7 @@ thread2释放许可证
 thread2结束
 ```
 
-# CountDownLatch （倒计时器）
+# CountDownLatch （计数器）
 
 **CountDownLatch允许一个或多个线程等待其他线程完成操作**。定义CountDownLatch的时候，需要传入一个正数来初始化计数器（虽然传入0也可以，但这样的话CountDownLatch没什么实际意义）。其`countDown`方法用于递减计数器，`await`方法会使当前线程阻塞，直到计数器递减为0。所以CountDownLatch常用于多个线程之间的协调工作。
 
