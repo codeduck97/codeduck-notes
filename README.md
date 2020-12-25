@@ -11,10 +11,12 @@
 - [数据结构与算法](#数据结构与算法)
   - [数据结构](#数据结构)
   - [算法习题](#算法习题)
+- [数据库](#数据库)
+  - [mysql](#mysql)
 - [计算机网络](#计算机网络)
 - [计算及操作系统](#计算机操作系统)
 - [开发框架](#开发框架)
-  - [Spring/SpringBoot](#Spring/SpringBoot)
+  - [Spring&SpringBoot](#Spring&SpringBoot)
 
 ## Java
 
@@ -59,6 +61,12 @@
 3. [排序算法总结](docs/data-structures&algorithm/algorithm/排序算法总结.md)
 4. [查找算法总结](docs/data-structures&algorithm/algorithm/查找算法总结.md)
 
+## 数据库
+
+### mysql
+
+1. [mysql学习笔记](docs/database/mysql/mysql学习笔记.md)
+
 ## 计算机网络
 
 1. 计算机网络传笔记送门(待整理……)
@@ -75,7 +83,7 @@
 
 ## 开发框架
 
-### Spring/SpringBoot
+### Spring&SpringBoot
 
 1. [Spring/SpringBoot笔记传送门](docs/dev-framework/Spring&SpringBoot.md)
 
