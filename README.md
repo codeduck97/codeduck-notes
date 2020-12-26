@@ -12,11 +12,14 @@
   - [数据结构](#数据结构)
   - [算法习题](#算法习题)
 - [数据库](#数据库)
-  - [mysql](#mysql)
+  - [MySQL](#MySQL)
 - [计算机网络](#计算机网络)
 - [计算及操作系统](#计算机操作系统)
 - [开发框架](#开发框架)
   - [Spring与SpringBoot](#Spring与SpringBoot)
+  - [安全框架](#安全框架)
+  - [消息队列](#消息队列)
+  - [搜索引擎](#搜索引擎)
 
 ## Java
 
@@ -63,9 +66,9 @@
 
 ## 数据库
 
-### mysql
+### MySQL
 
-1. [mysql学习笔记](docs/database/mysql/mysql学习笔记.md)
+1. [MySQL学习笔记](docs/database/mysql/mysql学习笔记.md)
 
 ## 计算机网络
 
