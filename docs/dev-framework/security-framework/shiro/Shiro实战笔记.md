@@ -1,0 +1,3 @@
+推荐阅读：https://waylau.com/apache-shiro-1.2.x-reference/index.html
+
+笔记后续整理……

@@ -85,5 +85,19 @@
 
 ### Spring与SpringBoot
 
-1. [Spring/SpringBoot笔记传送门](docs/dev-framework/Spring&SpringBoot.md)
+1. [Spring/SpringBoot笔记传送门](docs/dev-framework/spring-springboot/Spring&SpringBoot.md)
+
+### 安全框架
+
+1. [Shiro实战笔记](docs/dev-framework/security-framework/shiro/Shiro实战笔记.md)
+2. [JWT实战笔记](docs/dev-framework/security-framework/jwt/JWT实战笔记.md)
+3. SpringSecurity
+
+### 消息队列
+
+1. [RabbitMQ实战笔记](docs/dev-framework/message-queue/RibbitMQ实战.md)
+
+### 搜索引擎
+
+1. [Elasticsearch实战笔记](docs/dev-framework/search-engine/Elasticsearch实战笔记.md)
 
