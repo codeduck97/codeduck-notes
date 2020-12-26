@@ -728,9 +728,46 @@ thread1线程完成了一次ABA操作
 thread2线程修改值失败，当前值为：A，版本号为：3
 ```
 
-# 线程池的使用
+# 线程池
 
-## ThreadPoolExecutor创建线程池
+使用线程池的优点：
+
+- **降低资源消耗**。通过重复利用已创建的线程降低线程创建和销毁造成的消耗。
+- **提高响应速度**。当任务到达时，任务可以不需要的等到线程创建就能立即执行。
+- **提高线程的可管理性**。线程是稀缺资源，如果无限制的创建，不仅会消耗系统资源，还会降低系统的稳定性，使用线程池可以进行统一的分配，调优和监控。
+
+## 线程池的实现原理
+
+1. 线程池判断核心线程池内的线程是否都在执行任务，是！则跳2步骤，否则创建新的线程来处理任务。
+2. 线程池判断等待队列是否已满，是！则跳3步骤，否则将该任务加入等待队列。
+3. 线程池判断线程池里的线程是否都处于工作状态（线程池已满，核心线程与非核心线程都在运行，满足线程池最大线程数），是！交给饱和策略处理，否则创建新线程执行任务。
+
+![图解线程池实现原理](images/图解线程池实现原理.png)
+
+## 线程池的状态
+
+线程池包含以下几个状态：
+
+![QQ截图20190702100110.png](https://mrbird.cc/img/QQ%E6%88%AA%E5%9B%BE20190702100110.png)
+
+**Running**：线程池一旦被创建就处于运行状态，这是线程池的初始状态，用于处理任务。
+
+**Shutdown**：不接受新的任务提交，但是会继续处理等待队列中的任务。
+
+**Stop**：不接受新的任务提交，不再处理等待队列中的任务，中断正在执行任务的线程。
+
+**Tidying**：所有的线程运行完毕，并且等待队列中也没有任务时，线程池会变为Tidying状态。变为Tidying状态时，会执行钩子函数terminated()。
+
+**Terminated**：线程池彻底终止。
+
+当线程池中所有任务都处理完毕后，线程并不会自己关闭。我们可以通过调用`shutdown`和`shutdownNow`方法来关闭线程池。两者的区别在于：
+
+1. `shutdown`方法将线程池置为shutdown状态，拒绝新的任务提交，但线程池并不会马上关闭，而是等待所有正在执行的和线程队列里的任务都执行完毕后，线程池才会被关闭。所以这个方法是平滑的关闭线程池。
+2. `shutdownNow`方法将线程池置为stop状态，拒绝新的任务提交，中断正在执行的那些任务，并且清除线程队列里的任务并返回。所以这个方法是比较“暴力”的。
+
+## 线程池的使用
+
+### ThreadPoolExecutor创建线程池
 
 阿里巴巴推荐的使用 `ThreadPoolExecutor` 构造函数自定义参数的方式来创建线程池。
 
@@ -759,7 +796,7 @@ ThreadPoolExecutor(int corePoolSize,
 
 如果当前同时运行的线程数量达到最大线程数量并且队列也已经被放满了任时，`ThreadPoolTaskExecutor` 定义一些策略:
 
-- **ThreadPoolExecutor.AbortPolicy：**直接拒绝新任务的处理。
+- **ThreadPoolExecutor.AbortPolicy：**直接抛出异常。
 - **ThreadPoolExecutor.CallerRunsPolicy：**调用执行自己的线程运行任务，也就是直接在调用execute方法的线程中运行(run)被拒绝的任务，如果执行程序已关闭，则会丢弃该任务。
 - **ThreadPoolExecutor.DiscardPolicy：** 不处理新任务，直接丢弃掉。
 - **ThreadPoolExecutor.DiscardOldestPolicy：** 此策略将丢弃最早的未处理的任务请求。
@@ -831,9 +868,9 @@ pool-1-thread-3: 执行完毕！
 
 ThreadPoolExecutor的execute和submit方法都可以向线程池提交任务，区别是，**submit方法能够返回执行结果，返回值类型为Future**
 
-## Executors创建线程池
+### Executors创建线程池
 
-### newFixedThreadPool
+#### newFixedThreadPool
 
 **FixedThreadPool** ： 该方法返回一个固定线程数量的线程池。该线程池中的线程数量始终不变。当有一个新的任务提交时，线程池中若有空闲线程，则立即执行。若没有，则新的任务会被暂存在一个任务队列中，待有线程空闲时，便处理在任务队列中的任务。
 
@@ -887,7 +924,7 @@ pool-1-thread-2: 执行完毕！
 pool-1-thread-3: 执行完毕！
 ```
 
-### newSingleThreadExecutor
+#### newSingleThreadExecutor
 
 **SingleThreadExecutor：** 方法返回一个只有一个线程的线程池。若多余一个任务被提交到该线程池，任务会被保存在一个任务队列中，待线程空闲，按先入先出的顺序执行队列中的任务。
 
@@ -938,7 +975,7 @@ pool-1-thread-1: 开始执行！
 pool-1-thread-1: 执行完毕！
 ```
 
-### newCachedThreadPool
+#### newCachedThreadPool
 
 **CachedThreadPool：** 该方法返回一个可根据实际情况调整线程数量的线程池。线程池的线程数量不确定，但若有空闲线程可以复用，则会优先使用可复用的线程。若所有线程均在工作，又有新的任务提交，则会创建新的线程处理任务。所有线程在当前任务执行完毕后，将返回线程池进行复用。
 
@@ -1000,7 +1037,7 @@ pool-1-thread-10: 执行完毕！
 pool-1-thread-6: 执行完毕！
 ```
 
-### newScheduledThreadPool
+#### newScheduledThreadPool
 
 ScheduledThreadPool是一个能实现**定时、周期性任务**的线程池。
 
@@ -1060,21 +1097,10 @@ pool-1-thread-1执行完毕！
 pool-1-thread-2执行完毕！
 ```
 
-### Executos创建线程的弊端
+#### Executos创建线程的弊端
 
 - **FixedThreadPool 和 SingleThreadExecutor** ： 允许请求的队列长度为 Integer.MAX_VALUE ，可能堆积大量的请求，从而导致 OOM。
 - **CachedThreadPool 和 ScheduledThreadPool** ： 允许创建的线程数量为 Integer.MAX_VALUE ，可能会创建大量线程，从而导致 OOM。
-
-## 线程池的关闭
-
-线程池包含以下几个状态：
-
-![QQ截图20190702100110.png](https://mrbird.cc/img/QQ%E6%88%AA%E5%9B%BE20190702100110.png)
-
-当线程池中所有任务都处理完毕后，线程并不会自己关闭。我们可以通过调用`shutdown`和`shutdownNow`方法来关闭线程池。两者的区别在于：
-
-1. `shutdown`方法将线程池置为shutdown状态，拒绝新的任务提交，但线程池并不会马上关闭，而是等待所有正在执行的和线程队列里的任务都执行完毕后，线程池才会被关闭。所以这个方法是平滑的关闭线程池。
-2. `shutdownNow`方法将线程池置为stop状态，拒绝新的任务提交，中断正在执行的那些任务，并且清除线程队列里的任务并返回。所以这个方法是比较“暴力”的。
 
 # 队列同步器（AQS）
 

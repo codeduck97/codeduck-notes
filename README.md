@@ -16,7 +16,7 @@
 - [计算机网络](#计算机网络)
 - [计算及操作系统](#计算机操作系统)
 - [开发框架](#开发框架)
-  - [Spring&SpringBoot](#Spring&SpringBoot)
+  - [Spring与SpringBoot](#Spring与SpringBoot)
 
 ## Java
 
@@ -83,7 +83,7 @@
 
 ## 开发框架
 
-### Spring&SpringBoot
+### Spring与SpringBoot
 
 1. [Spring/SpringBoot笔记传送门](docs/dev-framework/Spring&SpringBoot.md)
 
