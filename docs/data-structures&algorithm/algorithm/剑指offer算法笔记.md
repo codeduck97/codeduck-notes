@@ -3205,6 +3205,84 @@ class Solution {
 }
 ```
 
+## 45. 把数组排成最小的数
+
+输入一个非负整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个。
+
+ **示例 1:**
+
+```
+输入: [10,2]
+输出: "102"
+```
+
+**示例 2:**
+
+```
+输入: [3,30,34,5,9]
+输出: "3033459"
+```
+
+ **提示:**
+
+- `0 < nums.length <= 100`
+
+**说明:**
+
+- 输出结果可能非常大，所以你需要返回一个字符串而不是整数
+- 拼接起来的数字可能会有前导 0，最后结果不需要去掉前导 0
+
+[解题思路](https://leetcode-cn.com/problems/ba-shu-zu-pai-cheng-zui-xiao-de-shu-lcof/solution/mian-shi-ti-45-ba-shu-zu-pai-cheng-zui-xiao-de-s-4/)
+
+```java
+public class Offer45 {
+    // 数组内拼接的数值可能会发生数组越界，因此，返回值为String类型
+    public String minNumber(int[] nums) {
+
+        // 使用String数组记录int数组中的元素，容易进行数字之间的拼接比较
+        String[] arr = new String[nums.length];
+        for (int i = 0; i < nums.length; i++) {
+            arr[i] = String.valueOf(nums[i]);
+        }
+
+        // 对String数组内的元素使用快排进行排序
+        quickSort(arr, 0, arr.length - 1);
+        StringBuilder rs = new StringBuilder();
+        for (String s : arr) {
+            rs.append(s);
+        }
+        return rs.toString();
+    }
+
+    private void quickSort(String[] arr, int left, int right) {
+        if (left >= right) return;
+
+        int i = left, j = right;
+        String baseElement = arr[i];
+
+        while (i < j) {
+            // 1. if x >= y then x.compareTo(y) >= 0
+            // 2. if x + y > y + x then x > y
+            // 3. if x + y < y + x then x < y
+            while ((arr[j] + arr[left]).compareTo(arr[left] + arr[j]) >= 0 && i < j) j--;
+            while ((arr[i] + arr[left]).compareTo(arr[left] + arr[i]) <= 0 && i < j) i++;
+
+            if (i < j) {
+                String temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+
+        arr[left] = arr[i];
+        arr[i] = baseElement;
+
+        quickSort(arr, left, i-1);
+        quickSort(arr, i+1, right);
+    }
+}
+```
+
 
 
 ## 46. 把数字翻译成字符串

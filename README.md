@@ -1,6 +1,6 @@
 > 个人博客网站，阅读性可能较差，仅供学习参考，勿喷……
 >
-> PS: 笔记面经内容借鉴于[JavaGuide](https://snailclimb.gitee.io/javaguide/)，感谢Guide bro，JVM借鉴于[mrbird](https://mrbird.cc/JVM-Learn.html)，其他内容为本人自行整理。
+> PS: 笔记面经内容借鉴于[JavaGuide](https://snailclimb.gitee.io/javaguide/)，感谢Guide bro，JVM与JUC借鉴于[mrbird](https://mrbird.cc/JVM-Learn.html)，感谢。其他内容为本人自行整理。
 
 - [Java](#Java)
   - [基础知识](#基础知识)
@@ -26,6 +26,7 @@
 ### 基础知识
 
 1. [Java基础知识](docs/java/basic/Java基础知识.md)
+2. [JavaNIO笔记](docs/java/java-nio/JavaNIO学习笔记.md)
 
 ### 集合框架
 
