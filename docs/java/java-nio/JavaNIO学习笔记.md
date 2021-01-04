@@ -1,6 +1,6 @@
 Java NIO（New IO或 Non Blocking IO）是从Java 1.4版本开始引入的一个新的IO API，可以替代标准的Java IO API。NIO支持面向缓冲区的、基于通道的IO操作。NIO将以更加高效的方式进行文件的读写操作。
 
-# Java IO 与 Java NIO 的区别
+# 1. Java IO 与 Java NIO 的区别
 
 - IO 是面向流的，即在传输数据时建立传输通道，该传输通道类比为水管，数据流在传输通道中进行单向数据传输（可以理解为水流从高到低单向传输）。NIO 是面向缓冲区的，即在数据传输时建立传输通道，该传输通道类比为河流，而河流中有小船（缓冲区）负责双向运输数据。
 - IO 是阻塞 IO，NIO 是非阻塞IO；
@@ -8,9 +8,9 @@ Java NIO（New IO或 Non Blocking IO）是从Java 1.4版本开始引入的一个
 
 Java NIO系统的核心在于：通道（Channel）和缓冲区（Buffer）。通道表示打开到 IO 设备（例如：文件、套接字）的连接。若需要使用 NIO 系统，需要获取用于连接 IO 设备的通道以及用于容纳数据的缓冲区。然后操作缓冲区，对数据进行处理，**因此 Channel 负责传输，Buffer负责存储。**
 
-# NIO 缓冲区
+# 2. NIO 缓冲区
 
-## Buffer的类型
+## 2.1 Buffer的类型
 
 缓冲区（Buffer）：在java NIO 中负者数据的存储。缓冲区就是数组。用于存储不同类型的数据。
 
@@ -24,7 +24,7 @@ Java NIO系统的核心在于：通道（Channel）和缓冲区（Buffer）。�
 - FloatBuffer
 - DoubleBuffer
 
-## 缓冲区存取数据的两个核心方法
+## 2.2 缓冲区存取数据的两个核心方法
 
 put方法 —— 存入数据到缓冲区中
 
@@ -38,7 +38,7 @@ get方法 —— 获取缓存区中的数据
  *       get（byte[] dst）：批量读取多个字节到 dst 中；
  *       get（int index）：读取指定索引位置的字节（不会移动 position）；
 
-## 缓冲区中的四个核心属性
+## 2.3 缓冲区中的四个核心属性
 
 **capacity：**容量，表示缓冲区中最大存储数据的容量，一旦声明不能改变；
 
@@ -109,7 +109,7 @@ public final Buffer flip() {
 }
 ```
 
-## 直接缓冲区与非直接缓冲区
+## 2.4 直接缓冲区与非直接缓冲区
 
 非直接缓冲区：通过allocate（）方法分配缓冲区，将缓冲区建立在 JVM 的内存中。
 
@@ -136,11 +136,9 @@ System.out.println(directBuffer.isDirect());    // true
 System.out.println(buffer.isDirect());          // false
 ```
 
+# 3. NIO 通道
 
-
-# NIO 通道
-
-## 通道基本概念
+## 3.1 通道基本概念
 
 Channel 表示 IO 源与目标打开的连接。
 Channel 类似于传统的“流”。但其自身不能直接访问数据，Channel只能与Buffer进行交互。
@@ -149,14 +147,14 @@ Channel 类似于传统的“流”。但其自身不能直接访问数据，Cha
 
 操作系统中：通道是一种通过执行通道程序管理I/O操作的控制器，它使主机（CPU和内存）与I/O操作之间达到更高的并行程度。需要进行I/O操作时，CPU只需启动通道，然后可以继续执行自身程序，通道则执行通道程序，管理与实现I/O操作。
 
-## 通道的主要实现类
+## 3.2 通道的主要实现类
 
 - FileChannel：文件通道
 - SocketChannel：套接字通道
 - ServerSocketChannel：套接字通道
 - DatagramChannel：用于网络
 
-## 获取通道的方式
+## 3.3 获取通道的方式
 
 Java 针对支持通道的类，提供了一个getChannel() 方法
 
@@ -173,7 +171,7 @@ Java 针对支持通道的类，提供了一个getChannel() 方法
 
 在JDK 1.7 中NIO.2 的Files工具类提供了一个静态方法：`newByteChannel()`
 
-## 使用通道完成文件复制
+## 3.4 使用通道完成文件复制
 
 - 使用非直接缓冲区完成文件复制
 
@@ -274,7 +272,7 @@ public static void main(String[] args) throws IOException {
 
 ```
 
-## 分散与聚集
+## 3.5 分散与聚集
 
 - 分散读取（Scatter Reads）：将通道中的数据分散到多个缓冲区中（按顺序分散）；
 - 聚集写入（Gather Writes）：将多个缓冲区中的数据都聚集到通道中（按顺序分散）；
@@ -313,7 +311,7 @@ public static void main(String[] args) throws IOException {
 }
 ```
 
-## 字符集
+## 3.6 字符集
 
 - 编码：字符串转换成字节数组
 - 解码：字节数组转换成字符串
@@ -347,9 +345,9 @@ public static void main(String[] args) throws CharacterCodingException {
 }
 ```
 
-# NIO 非阻塞式网络通信
+# 4. NIO 非阻塞式网络通信
 
-## NIO 网络编程基本概念
+## 4.1 NIO 网络编程基本概念
 
 传统的阻塞式 IO（BIO）必须等待内容获取完毕后，才能够继续往下执行。在 NIO 中，引入了`选择器`的概念，它会把每个通道都注册到选择器中，选择器的作用就是监控通道上的 IO状态，如果某个通道上，IO请求已经准备就绪时，那么选择器才会将该客户端的通道分配到服务端的一个或多个线程上。
 
@@ -366,7 +364,7 @@ public static void main(String[] args) throws CharacterCodingException {
 - **缓冲区（Buffer）：**负责数据的存取；
 - **选择器（Selector）：**SelectableChannel 的多路复用器，用于监控 SelectorableChannel 的 IO 状况；
 
-## 阻塞与非阻塞
+## 4.2 阻塞与非阻塞
 
 阻塞和非阻塞指的是调用者（程序）在等待返回结果（或输入）时的状态。阻塞时，在调用结果返回前，当前线程会被挂起，并在得到结果之后返回。非阻塞时，如果不能立刻得到结果，则该调用者不会阻塞当前线程。
 
@@ -374,7 +372,7 @@ public static void main(String[] args) throws CharacterCodingException {
 
 非阻塞：买票时拿到一个排队号码，在没有轮到该排队号码时，可以做去处理其他事情。
 
-## 阻塞式通信
+## 4.3 阻塞式通信
 
 - 客户端
 
@@ -483,7 +481,7 @@ public static void main(String[] args) throws InterruptedException {
 }
 ```
 
-## 非阻塞式通信
+## 4.4 非阻塞式通信
 
 - 客户端
 
@@ -580,7 +578,7 @@ public static void server() throws IOException {
 }
 ```
 
-## 非阻塞式聊天室
+## 4.5 非阻塞式聊天室
 
 - 客户端
 
@@ -701,7 +699,7 @@ public static void main(String[] args) throws IOException {
 
 ![chat](images/chat.gif)
 
-## DatagramChannel通信
+## 4.6 DatagramChannel通信
 
 - 客户端
 
@@ -757,7 +755,7 @@ public static void server() throws IOException {
 }
 ```
 
-## 管道
+## 4.7 管道（Pipe）
 
 Java NIO管道是两个线程之间的单向数据连接。Pipe有一个source通道和一个sink通道，数据会被写入到sink通道，从source通道读取。
 
