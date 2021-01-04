@@ -1,17 +1,15 @@
-# Java8 新特性
-
-## 1. Lambda 表达式
+# 1. Lambda 表达式
 
 Lambda允许把函数作为一个方法的参数（函数作为参数传递进方法中）。使用 Lambda 表达式可以使代码变的更加简洁紧凑。
 
-### 1.2 Lambda语法
+## 1.1 Lambda语法
 
 Java8中引入了一个新的操作符 “—>” 该操作符称为箭头操作符 或 Lambda操作符。箭头操作符将Lambda表达式拆分为两部分：
 
 - 左侧：Lambda表达式的参数列表（可以想象成，是上面定义的接口中抽象方法参数的列表）；
 - 右侧：Lambda表达式中，所需要执行的功能，即Lambda体（需要对抽象方法实现的功能），若右侧只有一行代码，则可省略{}，否则必须添加{}；
 
-### 1.3 基本使用
+## 1.2 基本使用
 
 ```java
 @Test
@@ -44,16 +42,16 @@ public void test01() {
 }
 ```
 
-## 2. 函数式接口
+# 2. 函数式接口
 
-### 2.1 四大核心函数式接口
+## 2.1 四大核心函数式接口
 
 1. Consumer<T>：消费型接口，包含方法 void accept（T t）表示对类型为T的对象应用操作；
 2. Supplier<T> ：供给型接口，包含方法 T get（）返回类型为T的对象；
 3. Function<T,R>：函数型接口，包含方法 R apply（T t）操作T类型对象，返回R类型对象；
 4. Predicate<T>：断言型接口，包含方法 boolean test（T t）确定T类型对象是否满足约束条件；
 
-### 2.2 Consumer 接口
+## 2.2 Consumer 接口
 
 代表了接受一个输入参数并且无返回的操作。
 
@@ -96,7 +94,7 @@ public void whoAmI(String name, Consumer<String> consumer) {
 }
 ```
 
-### 2.2 Supplier 接口
+## 2.3 Supplier 接口
 
 无参数，返回一个结果。
 
@@ -121,7 +119,7 @@ public List<Integer> getNums(Integer n, Supplier<Integer> supplier) {
 }
 ```
 
-### 2.3 Function 接口
+## 2.4 Function 接口
 
 接受一个输入参数T，返回一个结果R。
 
@@ -137,7 +135,7 @@ public int strLen(String s, Function<String,Integer> function){
 }
 ```
 
-### 2.4 Predicate 接口
+## 2.5 Predicate 接口
 
 接受一个输入参数，返回一个布尔值结果。
 
@@ -163,11 +161,11 @@ public static List<String> strPredict(List<String> list, Predicate<String> predi
 }
 ```
 
-## 3. 方法的引用
+# 3. 方法的引用
 
 **方法的引用：**通过类或对象的引用，使用`::`来调用类中的静态方法或实例对象中的方法。
 
-### 3.1 对象::实例方法
+## 3.1 对象::实例方法
 
 ```java
 @Test
@@ -178,7 +176,7 @@ public void test01() {
 }
 ```
 
-### 3.2 类::静态方法
+## 3.2 类::静态方法
 
 ```java
 @Test
@@ -192,7 +190,7 @@ public void test02() {
 }
 ```
 
-### 3.3 类::new
+## 3.3 类::new
 
 ```java
 @Test
@@ -213,7 +211,7 @@ public void test03() {
 }
 ```
 
-### 3.4 数组类型::new
+## 3.4 数组类型::new
 
 ```java
 @Test
@@ -229,9 +227,9 @@ public void test04() {
 }
 ```
 
-## 4. Stream（流）
+# 4. Stream（流）
 
-### 4.1 何为 Stream
+## 4.1 何为 Stream
 
 [引自](https://www.runoob.com/java/java8-streams.html)Stream（流）是一个来自数据源的元素队列并支持聚合操作
 
@@ -244,14 +242,14 @@ public void test04() {
 - **Pipelining**: 中间操作都会返回流对象本身。 这样多个操作可以串联成一个管道， 如同流式风格（fluent style）。 这样做可以对操作进行优化， 比如延迟执行(laziness)和短路( short-circuiting)；
 - **内部迭代**： 以前对集合遍历都是通过Iterator或者For-Each的方式，显式的在集合外部进行迭代， 这叫做外部迭代。 Stream提供了内部迭代的方式， 通过访问者模式(Visitor)实现；
 
-### 4.2 流的创建方法
+## 4.2 流的创建方法
 
 在 Java 8 中, 集合接口有两个方法来生成流：
 
 - **stream()** − 为集合创建串行流。
 - **parallelStream()** − 为集合创建并行流。
 
-#### 4.2.1 通过集合生成流
+### 4.2.1 通过集合生成流
 
 ```java
 // 通过Collection集合的 stream() 或者 parallelStream() 获取流。
@@ -264,7 +262,7 @@ Stream<String> stream =  list.stream();
 Stream<String> parallelStream = list.parallelStream();
 ```
 
-#### 4.2.2 通过数组生成流
+### 4.2.2 通过数组生成流
 
 ```java
 String[] s = new String[3];
@@ -273,19 +271,19 @@ String[] s = new String[3];
 Stream<String> stream = Arrays.stream(s);
 ```
 
-#### 4.2.3 通过Stream生成流
+### 4.2.3 通过Stream生成流
 
 ```
 Stream<Integer> stream = Stream.of(1, 2, 3);
 ```
 
-#### 4.2.4 生成无限流
+### 4.2.4 生成无限流
 
 ```
 Stream<Integer> stream = Stream.iterate(0, x -> x + 2 );
 ```
 
-### 4.3 Stream 的操作
+## 4.3 Stream 的操作
 
 **中间操作：**一个中间操作链，对数据源的数据进行处理；
 
@@ -293,7 +291,7 @@ Stream<Integer> stream = Stream.iterate(0, x -> x + 2 );
 
 多个中间操作可以连接起来形成一个流水线，除非流水线上触发终止操作，否者中间操作不会执行任何的处理，而在终止操作时一次性全部处理，这样被称为惰性求值。
 
-#### 4.3.1 Stream 数据处理
+### 4.3.1 Stream 数据处理
 
 - filter（Predicate p）：接收Lambda表达式，从流中过滤某些元素；
 - distinct（）：筛选，通过流所生成的hashCode（）和equals（）去除重复元素；
@@ -318,7 +316,7 @@ persons.stream().filter(x -> x.getAge() < 40).limit(2).forEach(System.out::print
 persons.stream().skip(3).forEach(System.out::println);
 ```
 
-#### 4.3.2 Stream 映射
+### 4.3.2 Stream 映射
 
 - map（Function f），将元素转换成其它形式或提取信息，接收一个函数作为参数，该函数会被应用到每个元素上，并将其映射成一个新元素；
 
@@ -349,7 +347,7 @@ public static Stream<Character> fromStringToStream(String str) {
 }
 ```
 
-#### 4.3.3 Stream 排序
+### 4.3.3 Stream 排序
 
 排序方法可分为：
 
@@ -396,7 +394,7 @@ Person[name='ls', age=19]
 Person[name='codeduck', age=23]
 ```
 
-#### 4.3.4 Stream 终止操作
+### 4.3.4 Stream 终止操作
 
 执行下列操作后，Stream流就会进行终止执行。
 
@@ -410,7 +408,7 @@ Person[name='codeduck', age=23]
 - min：返回当前流中最小值；
 - forEach：内部迭代；
 
-#### 4.3.5 Stream 归约
+### 4.3.5 Stream 归约
 
 - reduce（T identity，BinaryOperator b）将流中元素反复结合起来，得到一个值，返回T
 
@@ -433,7 +431,7 @@ public void test06() {
 }
 ```
 
-#### 4.3.6 Stream 收集
+### 4.3.6 Stream 收集
 
 - collect（Collector c）将流转换成其它形式，接收一个Collector接口实现，用于给Stream中元素做汇总的方法；
 
@@ -462,7 +460,7 @@ Collector接口实现方法的实现决定了如何对流执行收集操作（�
     }
 ```
 
-## 5. Optional 类
+# 5. Optional 类
 
 Optional 类是一个可以为null的容器对象。如果值存在则isPresent()方法会返回true，调用get()方法会返回该对象。
 
@@ -470,7 +468,7 @@ Optional 是个容器：它可以保存类型T的值，或者仅仅保存null。
 
 Optional 类的引入很好的解决空指针异常。
 
-### 5.1 常用方法
+## 5.1 常用方法
 
 - Optional.of：创建一个Optional实例
 - Optional.empty：创建一个空的Optional实例
@@ -481,7 +479,7 @@ Optional 类的引入很好的解决空指针异常。
 - map(Function f)：如果有值对其处理，返回处理后的Optional，否则返回Optional.empty()
 - flatMap(Function mapper)：与map类似，要求返回值必须是Optional
 
-### 5.2 基本使用
+## 5.2 基本使用
 
 ```java
 @Test
