@@ -1,6 +1,6 @@
 # 1. 数组
 
-## 1.1 删除移动数组元素
+## 1.1 移动数组元素
 
 ### 旋转数组
 
@@ -81,7 +81,7 @@ class Solution {
 1. 必须在原数组上操作，不能拷贝额外的数组。
 2. 尽量减少操作次数。
 
-> 解题思路：扫描数组内非零的元素，将非零值从下标为0开始逐个添加到该数组中（覆盖所有值），然后将索引后空间的值用 0 覆盖掉（因此需要一个索引来记录对数组的扫描）
+> 解题思路：扫描数组内所有非零的元素，将其逐个添加到数组前列，数组空余的部分直接用零填充。
 
 ```java
 public static void moveZeroes(int[] nums) {
@@ -108,9 +108,9 @@ public static void moveZeroes(int[] nums) {
 
 ### 移除元素
 
-给你一个数组 *nums* 和一个值 *val*，你需要 **[原地](https://baike.baidu.com/item/原地算法)** 移除所有数值等于 *val* 的元素，并返回移除后数组的新长度。
+给你一个数组 *nums* 和一个值 *val*，你需要原地移除所有数值等于 *val* 的元素，并返回移除后数组的新长度。
 
-不要使用额外的数组空间，你必须仅使用 O(1) 额外空间并 **[原地 ](https://baike.baidu.com/item/原地算法)修改输入数组**。
+不要使用额外的数组空间，你必须仅使用 O(1) 额外空间并**原地修改输入数组**。
 
 元素的顺序可以改变。你不需要考虑数组中超出新长度后面的元素。
 
@@ -126,7 +126,7 @@ public static void moveZeroes(int[] nums) {
 你不需要考虑数组中超出新长度后面的元素。
 ```
 
-> 解题思想：同移动零，只需当索引的值 == val 时 对size = nums.length--，即可
+> 解题思想：同移动零，只需当索引的值 == val 时 对数组长度减一即可
 
 ```java
 public static int removeElement(int[] nums, int val) {
@@ -147,9 +147,9 @@ public static int removeElement(int[] nums, int val) {
 
 ### 删除排序数组中的重复项
 
-给定一个排序数组，你需要在**[ 原地](http://baike.baidu.com/item/原地算法)** 删除重复出现的元素，使得每个元素只出现一次，返回移除后数组的新长度。
+给定一个排序数组，你需要在原地删除重复出现的元素，使得每个元素只出现一次，返回移除后数组的新长度。
 
-不要使用额外的数组空间，你必须在 **[原地 ](https://baike.baidu.com/item/原地算法)修改输入数组** 并在使用 O(1) 额外空间的条件下完成。
+不要使用额外的数组空间，你必须在**原地修改输入数组**并在使用 O(1) 额外空间的条件下完成。
 
  **示例 1:**
 
@@ -176,22 +176,22 @@ public static int removeElement(int[] nums, int val) {
 ```java
 public int removeDuplicates(int[] nums) {
 
-    int size = 0;
+    int idx = 0;
     for (int i = 0; i < nums.length; i++) {
         
-        if (nums[size] != nums[i]) {
-            nums[++size] = nums[i];	// 将与当前索引不同的元素赋值于当前元素的下一个元素
+        if (nums[idx] != nums[i]) {
+            nums[++idx] = nums[i];
         }
     }
-    return size + 1; // 返回当前索引值+1
+    return idx + 1; // 返回当前索引值+1
 }
 ```
 
 ### 删除排序数组中的重复项 II
 
-给定一个排序数组，你需要在**[原地](http://baike.baidu.com/item/原地算法)**删除重复出现的元素，使得每个元素最多出现两次，返回移除后数组的新长度。
+给定一个排序数组，你需要在原地删除重复出现的元素，**使得每个元素最多出现两次**，返回移除后数组的新长度。
 
-不要使用额外的数组空间，你必须在**[原地](https://baike.baidu.com/item/原地算法)修改输入数组**并在使用 O(1) 额外空间的条件下完成。
+不要使用额外的数组空间，你必须在**原地修改输入数组**并在使用 O(1) 额外空间的条件下完成。
 
 **示例 1:**
 
@@ -1004,6 +1004,68 @@ public int search(int[] nums, int target) {
     return -1;
 }
 ```
+
+## 2.2 搜索插入位置
+
+给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。
+
+你可以假设数组中无重复元素。
+
+**示例 1:**
+
+```
+输入: [1,3,5,6], 5
+输出: 2
+示例 2:
+
+输入: [1,3,5,6], 2
+输出: 1
+示例 3:
+
+输入: [1,3,5,6], 7
+输出: 4
+示例 4:
+
+输入: [1,3,5,6], 0
+输出: 0
+```
+
+解题思路：可以使用二分查找在有序数组内寻找target，可能会遇到如下情况
+
+1. 寻找的target在数组内存在；
+2. target在数组内不存在，但是 nums[0] < target < nums[len-1]；
+3. target在数组内不存在，此时 target < num[0] ；
+4. target在数组内不存在，此时 target > nums[len-1]；
+
+```java
+class Solution {
+    public int searchInsert(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+
+        int mid = (left + right) / 2;
+
+        while (left <= right) {
+            
+            // 解决问题1
+            if (target == nums[mid]) return mid;
+
+            if (target > nums[mid]) left = mid + 1;
+            else if (target < nums[mid]) right = mid - 1;
+            
+            mid = (left + right) / 2;
+        }
+        
+        // 解决问题2
+        if (left > right && left != 0) return right + 1;
+        // 解决问题3
+        else if (left == 0) return 0;
+        // 解决问题4
+        else return nums.length;
+    }
+}
+```
+
+
 
 # 3. 排序
 

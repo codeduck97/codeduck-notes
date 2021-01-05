@@ -28,7 +28,6 @@
 1. [Java基础知识](docs/java/basic/Java基础知识.md)
 2. [Java反射机制](docs/java/basic/Java反射机制.md)
 3. [JavaNIO笔记](docs/java/java-nio/JavaNIO学习笔记.md)
-4. [Java8新特性](docs/java/basic/Java8新特性.md)
 
 ### 集合框架
 
@@ -55,6 +54,9 @@
 10. [程序编译与代码优化](docs/java/jvm/4.程序编译与代码优化.md)
 
 ### 新特性
+
+1. [Java8新特性](docs/java/basic/Java8新特性.md)
+2. Java9新特性
 
 ## 数据结构与算法
 
