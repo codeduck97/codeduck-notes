@@ -1039,11 +1039,7 @@ public static int solution03(int num) {
 -100.0 < x < 100.0
 **n 是 32 位有符号整数**，其数值范围是 [−2^31, 2^31 − 1] 。
 
-
-
 **函数实现并不难，难的是要充分考虑到计算异常**
-
-0^-1 = 计算异常、0 ^ 0 = 1或0
 
 ```java
 public static double myPower(double base, int exponent){
@@ -1082,9 +1078,9 @@ private static double powerWithUnsignedExponent(double base, int exponent) {
 ```
 
 **对无符号整型求指函数进行优化，利用如下公式进行求指运算：**
-$$
-a^n=\begin{cases} a^{n/2} * a^{n/2} ,n为偶数 \\ \\  a^{(n-1)/2} * a^{(n-1)/2} * a,n为奇数   \end{cases}
-$$
+
+![image-20210113094814939](images/image-20210113094814939.png)
+
 因此，当n = 16为偶数时，我们只需计算 a ^ 8 * a ^ 8;
 
 ​				当n = 17 为奇数时，我们只需计算 a ^ 8 * a ^ 8 * a。因此可以使用递归进行计算。
@@ -1097,10 +1093,12 @@ $$
 ```java
 private static double powerWithUnsignedExponent(double base, int exponent) {
 
-    // 递归退出条件
+    // 指数为0时直接返回1
     if (exponent == 0){
         return 1;
     }
+    
+    // 正常情况下的递归退出条件
     if (exponent == 1){
         return base;
     }
@@ -1114,6 +1112,7 @@ private static double powerWithUnsignedExponent(double base, int exponent) {
         result *= base;
     }
     return result;
+}
 }
 ```
 
