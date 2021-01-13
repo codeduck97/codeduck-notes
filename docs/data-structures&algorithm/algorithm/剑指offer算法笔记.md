@@ -1128,7 +1128,7 @@ private static double powerWithUnsignedExponent(double base, int exponent) {
 # 因此对 1111 1111 >> 1 = 1111 1111 = -1
 ```
 
-正确的做法是将右移改为除2操作，当 -1 / 2 = 0
+正确的做法是将右移改为除2操作（-1 / 2 = 0）
 
 ```java
 double result = powerWithUnsignedExponent(base,exponent / 2);
