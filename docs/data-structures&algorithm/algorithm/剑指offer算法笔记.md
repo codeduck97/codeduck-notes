@@ -1089,9 +1089,9 @@ private static double powerWithUnsignedExponent(double base, int exponent) {
 ```java
 private static double powerWithUnsignedExponent(double base, int exponent) {
 
-    // 指数为0时直接返回1
+    // 指数为0时直接返回1.0
     if (exponent == 0){
-        return 1;
+        return 1.0;
     }
     
     // 正常情况下的递归退出条件
@@ -1146,10 +1146,7 @@ double result = powerWithUnsignedExponent(base,exponent / 2);
 ```
 
 
-说明：
-
-用返回一个整数列表来代替打印
-n 为正整数
+说明：用返回一个整数列表来代替打印，n 为正整数
 
 > 不考虑大数的情况下
 
@@ -1179,8 +1176,6 @@ public static int[] printNumbers(int n) {
 > 若输入一个大数比如 n = 20，则 len = 10^20次方，其长度远超 int的表示范围，如果n无穷大呢？
 
 一般针对大数问题，都采用通过字符串将大数表示出来
-
-
 
 ## 18. 删除单向链表中的节点
 
@@ -1401,14 +1396,10 @@ class Solution {
 注：[3,1,2,4] 也是正确的答案之一。
 ```
 
- 
-
-**提示：**
+ **提示：**
 
 1. `1 <= nums.length <= 50000`
 2. `1 <= nums[i] <= 10000`
-
-
 
 ```java
 class Solution {
@@ -1481,8 +1472,6 @@ public ListNode getKthFromEnd(ListNode head, int k) {
 }
 ```
 
-
-
 ## 24. 实现单链表翻转
 
 **算法思想**
@@ -1535,8 +1524,6 @@ public ListNode reverseList(ListNode head) {
 }
 ```
 
-
-
 解法二：
 
 仅需保存三个节点——前驱节点，当前节点，和后驱节点，
@@ -1576,8 +1563,6 @@ public ListNode reverseList(ListNode head) {
     return head;
 }
 ```
-
-
 
 ## 25. 合并两个有序链表
 
@@ -1650,8 +1635,6 @@ public ListNode mergeTwoLists(ListNode l1, ListNode l2) {
 }
 ```
 
-
-
 ## 26. 树的子结构
 
 输入两棵二叉树A和B，判断B是不是A的子结构。**(约定空树不是任意一个树的子结构)**
@@ -1690,8 +1673,6 @@ B是A的子结构， 即 A中有出现和B相同的结构和节点值。
 
 
 限制： 0 <= 节点个数 <= 10000
-
-
 
 解题思路：一般情况下，没有特殊要求，树的遍历都是用递归。
 
@@ -1770,8 +1751,6 @@ private boolean searchTheSameNode(TreeNode nodeA, TreeNode nodeB) {
 }
 ```
 
-
-
 ## 27. 二叉树的镜像
 
 请完成一个函数，输入一个二叉树，该函数输出它的镜像。
@@ -1804,8 +1783,6 @@ private boolean searchTheSameNode(TreeNode nodeA, TreeNode nodeB) {
 
 **限制：0 <= 节点个数 <= 1000**
 
-
-
 解题思路：对树的所有节点进行递归遍历，当遇到一个根节点时，如果左右孩子节点都不为空，则对其进行交换
 
 ```java
@@ -1837,8 +1814,6 @@ public TreeNode mirrorTree(TreeNode root) {
     return root;
 }
 ```
-
-
 
 ## 28. 对称二叉树
 
@@ -1878,8 +1853,6 @@ public TreeNode mirrorTree(TreeNode root) {
    3    3
 ```
 
-
-
 ```java
 class Solution {
     public boolean isSymmetric(TreeNode root) {
@@ -1908,8 +1881,6 @@ class Solution {
 }
 ```
 
-
-
 ## 29. 顺时针打印数组（打印螺旋数组）
 
 
@@ -1933,8 +1904,6 @@ class Solution {
 
 - `0 <= matrix.length <= 100`
 - `0 <= matrix[i].length <= 100`
-
-
 
 ```java
 public int[] spiralOrder(int[][] matrix) {
@@ -4672,8 +4641,6 @@ class Solution {
 }
 ```
 
-
-
 ## 64. 求1+2+…+n
 
 求 `1+2+...+n` ，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?B:C）。
@@ -4695,8 +4662,6 @@ class Solution {
 **限制：**
 
 - `1 <= n <= 10000`
-
-
 
 `解题思路1：`使用逻辑运算表达式模拟判断条件，然后进行递归运算
 
@@ -4806,8 +4771,6 @@ class Solution {
 }
 ```
 
-
-
 ## 65. 不用加减乘除做加法
 
 写一个函数，求两个整数之和，要求在函数体内不得使用 “+”、“-”、“*”、“/” 四则运算符号。
@@ -4866,8 +4829,6 @@ class Solution {
     }
 }
 ```
-
-
 
 ## 66. 构建乘积数组
 
