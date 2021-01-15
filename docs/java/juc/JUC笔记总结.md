@@ -278,6 +278,10 @@ JUC包中提供以下并发容器：
 - **BlockingQueue:**  这是一个接口，JDK 内部通过链表、数组等方式实现了这个接口。表示阻塞队列，非常适合用于作为数据共享的通道。
 - **ConcurrentSkipListMap:**  跳表的实现。这是一个 Map，使用跳表的数据结构进行快速查找。
 
+**结构图如下：**
+
+![image-20210115110325727](images/image-20210115110325727.png)
+
 ## Map 线程安全问题
 
 `HashMap` 不是线程安全的，在并发场景下使用 `Collections.synchronizedMap()` 方法来包装我们的 HashMap来保证线程安全。但这是通过使用一个全局的锁来同步不同线程间的并发访问，因此会带来不可忽视的性能问题。
@@ -1339,7 +1343,9 @@ public class ReentrantLock implements Lock, java.io.Serializable {
 
 ### Semaphore
 
-# Semaphore（信号量）
+# 通信工具类
+
+## Semaphore（信号量）
 
 JUC的Semaphore俗称信号量，可用来控制同时访问特定资源的线程数量。通过它的构造函数我们可以指定信号量（称为许可证permits可能更为明确）的数量，线程可以调用Semaphore对象的`acquire`方法获取一个许可证，调用`release`来归还一个许可证。
 
@@ -1392,15 +1398,15 @@ thread2释放许可证
 thread2结束
 ```
 
-# CountDownLatch （计数器）
+## CountDownLatch （计数器）
 
 **CountDownLatch允许一个或多个线程等待其他线程完成操作**。定义CountDownLatch的时候，需要传入一个正数来初始化计数器（虽然传入0也可以，但这样的话CountDownLatch没什么实际意义）。其`countDown`方法用于递减计数器，`await`方法会使当前线程阻塞，直到计数器递减为0。所以CountDownLatch常用于多个线程之间的协调工作。
 
-## CountDownLatch 原理
+### CountDownLatch 原理
 
 CountDownLatch是共享锁的一种实现,它默认构造 AQS 的 state 值为 count。当线程使用countDown方法时,其实使用了`tryReleaseShared`方法以CAS的操作来减少state，直至state为0就代表所有的线程都调用了countDown方法。当调用await方法的时候，如果state不为0，就代表仍然有线程没有调用countDown方法，那么就把已经调用过countDown的线程都放入阻塞队列Park，并自旋CAS判断state == 0，直至最后一个线程调用了countDown，使得state == 0，于是阻塞的线程便判断成功，全部往下执行。
 
-## CountDownLatch 示例
+### CountDownLatch 示例
 
 假设我们现在有这样一个需求：
 
@@ -1556,7 +1562,7 @@ main线程执行完毕
 Thread[thread1,5,main]线程执行完毕
 ```
 
-# CyclicBarrier（同步屏障）
+## CyclicBarrier（同步屏障）
 
 CyclicBarrier 和 CountDownLatch 非常类似，它也可以实现线程间的技术等待，但是它的功能比 CountDownLatch 更加复杂和强大。主要应用场景和 CountDownLatch 类似。
 
@@ -1564,7 +1570,7 @@ CyclicBarrier 和 CountDownLatch 非常类似，它也可以实现线程间的�
 
 CyclicBarrier 的字面意思是可循环使用（Cyclic）的屏障（Barrier）。它要做的事情是，让一组线程到达一个屏障（也可以叫同步点）时被阻塞，直到最后一个线程到达屏障时，屏障才会开门，所有被屏障拦截的线程才会继续干活。CyclicBarrier 默认的构造方法是 `CyclicBarrier(int parties)`，其参数表示屏障拦截的线程数量，每个线程调用`await`方法告诉 CyclicBarrier 我已经到达了屏障，然后当前线程被阻塞。
 
-## CyclicBarrier示例
+### CyclicBarrier示例
 
 ```java
 public class CyclicBarrierTest {
@@ -1697,7 +1703,7 @@ public class CyclicBarrierTest2 {
 
 ![QQ截图20190513104938.png](images/QQ截图20190513104938.png)
 
-## BrokenBarrierException
+### BrokenBarrierException
 
 抛出`BrokenBarrierException`异常时表示屏障破损，此时标志位broken=true。抛出`BrokenBarrierException`异常的情况主要有：
 
@@ -1705,7 +1711,7 @@ public class CyclicBarrierTest2 {
 2. 其他等待的线程超时，则当前线程抛出`BrokenBarrierException`异常；
 3. 当前线程在等待时，其他线程调用CyclicBarrier.reset()方法，则当前线程抛出BrokenBarrierException异常。
 
-## CyclicBarrier 和 CountDownLatch 的区别
+### CyclicBarrier 和 CountDownLatch 的区别
 
 CountDownLatch 是计数器，只能使用一次，而 CyclicBarrier 的计数器提供 reset 功能，可以多次使用。但是我不那么认为它们之间的区别仅仅就是这么简单的一点。我们来从 jdk 作者设计的目的来看，javadoc 是这么描述它们的：
 
