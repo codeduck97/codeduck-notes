@@ -1721,7 +1721,7 @@ CountDownLatch 是计数器，只能使用一次，而 CyclicBarrier 的计数�
 
 CountDownLatch 是计数器，线程完成一个记录一个，只不过计数不是递增而是递减，而 CyclicBarrier 更像是一个阀门，需要所有线程都到达，阀门才能打开，然后继续执行。
 
-# Exchanger
+## Exchanger
 
 JUC中的Exchanger允许**成对的**线程在指定的同步点上通过`exchange`方法来交换数据。如果第一个线程先执行`exchange`方法，它会一直等待第二个线程也 执行`exchange`方法，当两个线程都到达同步点时，这两个线程就可以交换数据，将当前线程生产 出来的数据传递给对方。
 
