@@ -28,7 +28,6 @@
 1. [Java基础知识](docs/java/basic/Java基础知识.md)
 2. [Java反射机制](docs/java/basic/Java反射机制.md)
 3. [JavaNIO笔记](docs/java/java-nio/JavaNIO学习笔记.md)
-4. [Java8新特性](docs/java/basic/Java8新特性.md)
 
 ### 集合框架
 

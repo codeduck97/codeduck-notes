@@ -8,6 +8,126 @@ Java NIO（New IO或 Non Blocking IO）是从Java 1.4版本开始引入的一个
 
 Java NIO系统的核心在于：通道（Channel）和缓冲区（Buffer）。通道表示打开到 IO 设备（例如：文件、套接字）的连接。若需要使用 NIO 系统，需要获取用于连接 IO 设备的通道以及用于容纳数据的缓冲区。然后操作缓冲区，对数据进行处理，**因此 Channel 负责传输，Buffer负责存储。**
 
+## 1.1 Java IO实现通信功能
+
+**主要实现的功能：**在服务端创建一个线程池用来接收多个客户端的请求，并将客户端发送的信息打印出来。该服务器实现模式为一个连接一个线程，即客户端有连接请求时服务器端就需要启动一个线程进行处理。
+
+```java
+public class BIOServer {
+
+    private static final int CORE_POOL_SIZE = 5; // 最小可以同时运行的线程数量
+    private static final int MAX_POOL_SIZE = 10; // 同时运行的线程数量变为最大线程数
+    private static final int QUEUE_CAPACITY = 100; // 接收任务队列的容量
+    private static final Long KEEP_ALIVE_TIME = 10L; // 核心线程外的线程超时等待时间，超时将会被销毁
+    private static final ArrayBlockingQueue blockingQueue;
+
+    static  {
+        blockingQueue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
+    }
+
+    public static void main(String[] args) throws IOException, InterruptedException {
+
+
+        //线程池机制
+        //1. 创建一个线程池
+        //2. 如果有客户端连接，就创建一个线程，与之通讯(单独写一个方法)
+        ThreadPoolExecutor poolExecutor = 
+            new ThreadPoolExecutor(CORE_POOL_SIZE, MAX_POOL_SIZE, 
+                                   KEEP_ALIVE_TIME, TimeUnit.SECONDS, blockingQueue);
+
+        // 3. 创建ServerSocket
+        ServerSocket serverSocket = new ServerSocket(7200);
+        System.out.println("服务端已启动……");
+
+        // 4. 探测是否有客户端连接
+        while (true) {
+            //监听，等待客户端连接
+            System.out.println("等待连接....");
+
+            // accept方法会阻塞当前线程
+            final Socket socket = serverSocket.accept();
+            System.out.println("连接到一个客户端");
+
+            // 从线程池中分配一个线程来处理当前的客户端连接
+            poolExecutor.execute(() -> {
+                handlerRequest(socket);
+            });
+
+        }
+
+    }
+
+    /**
+     * 处理用户发送的数据
+     */
+    private static void handlerRequest(Socket socket) {
+        try {
+            byte[] bytes = new byte[1024];
+            //通过socket获取输入流
+            InputStream inputStream = socket.getInputStream();
+            int read;
+            while ((read = inputStream.read(bytes))!= -1) {
+                System.out.println("线程池 {{ 线程信息id = "
+                        + Thread.currentThread().getId() + ", 名字 = "
+                        + Thread.currentThread().getName() + " }} 读取客户端信息: "
+                        + new String(bytes, 0, read));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            System.out.println("线程池 {{ 线程信息id = " 
+                               + Thread.currentThread().getId() + ", 名字 = " 
+                               + Thread.currentThread().getName() + " }} 关闭与客户端的连接");
+            try {
+                socket.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+```
+
+- 客户端
+
+```java
+public class BIOClient {
+
+    private static final String IpAddress = "127.0.0.1";
+    private static final Integer port = 7200;
+
+    public static void main(String[] args) {
+        try {
+            Socket socket = new Socket(IpAddress, port);
+            System.out.println("与服务端已建立连接……");
+
+            Scanner scanner = new Scanner(System.in);
+
+            OutputStream outputStream = socket.getOutputStream();
+
+            while (true) {
+                String in = scanner.nextLine();
+                if ("exit".equals(in)) {
+                    outputStream.close();
+                    socket.close();
+                    System.out.println("通信结束……");
+                    break;
+                } else {
+                    outputStream.write(in.getBytes());
+                    outputStream.flush();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+- 运行结果
+
+![BIO](images/BIO.gif)
+
 # 2. NIO 缓冲区
 
 ## 2.1 Buffer的类型
