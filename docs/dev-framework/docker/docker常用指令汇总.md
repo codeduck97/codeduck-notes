@@ -2,9 +2,9 @@
 
 # Images镜像命令
 
-## 查找镜像
+## 获取镜像列表
 
-```shell
+```bash
 # 列出本地主机上的镜像
 $ docker images [OPTIONS] [REPOSITORY[:TAG]]
 
@@ -20,8 +20,26 @@ $ docker images [OPTIONS] [REPOSITORY[:TAG]]
 
     -q :只显示镜像ID。
 
-# 查找指定镜像
-$ docker search httpd
+```
+
+## 搜索镜像
+
+```shell
+# 搜索镜像
+$ docker search [OPTIONS] TERM
+
+# 可选参数
+    --automated：弃用，只列出自动构建类型的镜像
+
+    --filter , -f：基于给定条件过滤输出
+
+    --format：使用模板格式化显示输出    
+
+    --limit：Max number of search results ，默认值25
+
+    --no-trunc：禁止截断输出
+
+    --stars , -s：弃用，只显示收藏数不小于几颗星的镜像，移到--filter中使用 
 
 # --filter=stars=600: 只显示 starts>=600 的mysql镜像
 $ docker search --filter=stars=600 mysql
@@ -182,9 +200,7 @@ $ docker ps [OPTIONS]
 $ docker ps -n 5
 ```
 
-## 连接到运行中的容器
-
-### docker exec
+## docker exec 连接运行容器
 
 ```bash
 $ docker exec [OPTIONS] CONTAINER COMMAND [ARG...]
@@ -210,7 +226,7 @@ $ docker exec -it mynginx /bin/sh /root/runoob.sh
 $ exit
 ```
 
-### docker attach
+## docker attach 连接运行容器
 
 要attach上去的容器必须正在运行，可以同时连接上同一个container来共享屏幕（与screen命令的attach类似），也就是说当我们打开两个窗口用attach进入同一个容器的时候，两个窗口显示的内容是一致的。
 
@@ -357,7 +373,7 @@ docker logs [OPTIONS] CONTAINER
 $ docker run --name test -d busybox sh -c "while true; do $(echo date); sleep 1; done"$ date
 ```
 
-### 列出容器中运行的进程
+## 列出容器中运行的进程
 
 ```bash
 $ docker top CONTAINER [ps OPTIONS]
