@@ -132,7 +132,7 @@ public class BIOClient {
 
 ## 2.1 Buffer的类型
 
-缓冲区（Buffer）：在java NIO 中负者数据的存储。缓冲区就是数组。用于存储不同类型的数据。
+**缓冲区（Buffer）：**缓冲区本质上是一个**可以读写数据的内存块**，可以理解成是一个**容器对象（含数组）**，该对象提供了一组方法，可以更轻松地使用内存块，，缓冲区对象内置了一些机制，能够跟踪和记录缓冲区的状态变化情况。`Channel` 提供从文件、网络读取数据的渠道，但是读取或写入的数据都必须经由 `Buffer`
 
 根据数据类型的不同(boolean 除外)，有以下 Buffer 常用子类：
 
@@ -260,8 +260,14 @@ System.out.println(buffer.isDirect());          // false
 
 ## 3.1 通道基本概念
 
-Channel 表示 IO 源与目标打开的连接。
-Channel 类似于传统的“流”。但其自身不能直接访问数据，Channel只能与Buffer进行交互。
+1. NIO的通道类似于流，但有些区别如下：
+   - 通道可以同时进行读写，而流只能读或者只能写；
+   - 通道可以实现异步读写数据；
+   - 通道可以从缓冲读数据，也可以写数据到缓冲；
+2. `BIO` 中的 `Stream` 是单向的，例如 `FileInputStream` 对象只能进行读取数据的操作，而 `NIO` 中的通道（`Channel`）是双向的，可以读操作，也可以写操作。
+3. `Channel` 在 `NIO` 中是一个接口 `public interface Channel extends Closeable{}`
+4. 常用的 `Channel` 类有：`FileChannel`、`DatagramChannel`、`ServerSocketChannel` 和 `SocketChannel`。
+5. `FileChannel` 用于文件的数据读写，`DatagramChannel` 用于 `UDP` 的数据读写，`ServerSocketChannel` 和 `SocketChannel` 用于 `TCP` 的数据读写。
 
 ![image-20201230171349267](images/image-20201230171349267.png)
 
@@ -469,7 +475,7 @@ public static void main(String[] args) throws CharacterCodingException {
 
 ## 4.1 NIO 网络编程基本概念
 
-传统的阻塞式 IO（BIO）必须等待内容获取完毕后，才能够继续往下执行。在 NIO 中，引入了`选择器`的概念，它会把每个通道都注册到选择器中，选择器的作用就是监控通道上的 IO状态，如果某个通道上，IO请求已经准备就绪时，那么选择器才会将该客户端的通道分配到服务端的一个或多个线程上。
+传统的阻塞式 IO（BIO）必须等待内容获取完毕后，才能够继续往下执行。在 NIO 中，引入了`选择器`的概念，它会把每个通道都注册到选择器中，选择器的作用就是监控通道上的 IO状态，如果某个通道上，IO请求已经准备就绪，那么选择器才会将该客户端的通道分配到服务端的一个或多个线程上。
 
 ![image-20201231113217539](images/image-20201231113217539.png)
 
