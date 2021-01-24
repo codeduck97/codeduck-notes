@@ -274,6 +274,9 @@ $ docker stop [OPTIONS] CONTAINER [CONTAINER...]
     --time , -t：等待容器停止秒数，默认10秒    
 
 $ docker stop my_container
+
+# 停止所有容器
+$ docker stop $(docker ps -aq)
 ```
 
 ## 启动容器
@@ -323,7 +326,7 @@ $ docker rm --link /webapp/redis
 # 强制移除运行中的容器
 $ docker rm --force redis
 
-# 移除所有停止的容器
+# 删除所有停止的容器
 $ docker rm $(docker ps -a -q)
 
 # 移除容器和它的卷
@@ -420,6 +423,9 @@ docker inspect [OPTIONS] NAME|ID [NAME|ID...]
 # 获取容器名为container_name的ip地址
 $ docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' container_name
 
+# 获取所有容器的Ip地址
+$ docker inspect --format='{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq)
+
 # 获取容器的mac地址
 $ docker inspect --format='{{range .NetworkSettings.Networks}}{{.MacAddress}}{{end}}' container_name
 
@@ -432,4 +438,3 @@ $ docker inspect --format='{{.Config.Image}}' container_name
 # 列出容器绑定的所有端口
 $ docker inspect --format='{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} -> {{(index $conf 0).HostPort}} {{end}}' container_name
 ```
-
