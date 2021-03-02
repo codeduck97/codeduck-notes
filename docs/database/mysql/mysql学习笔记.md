@@ -257,8 +257,6 @@ Create Table: CREATE TABLE `tb_emp3` (
 1 row in set (0.00 sec)
 ```
 
-
-
 ### 2.2 修改数据表
 
 #### 2.2.1 修改表名
@@ -860,17 +858,17 @@ DROP TABLE person;
 
 - **单列索引和组合索引**
   单列索引即一个索引只包含单个列，一个表可以有多个单列索引。
-  组合索引是指在表的多个字段组合上创建的索引，只有在查询条件中使用了这些字段的左边字段时，索引才会被使用。使用组合索引时遵循最左前缀集合。
+  组合索引是指在表的多个字段组合上创建的索引，只有在查询条件中使用了这些字段的左边字段时，索引才会被使用。使用组合索引时遵循最左前缀集合（如果最左前缀的组合是乱序的，MySQL在执行时会对该组合进行优化达到最左前缀的效果）。
 
 - **全文索引**
 
-  全文索引类型为 FULLTEXT，在定义索引的列上支持值的全文查找，允许在这些索引列中插入重复值和空值。全文索引可以在CHAR、VARCHAR或者TEXT类型的列上创建。MySQL中只有 MyISAM存储引擎支持全文索引。
+  全文索引类型为 FULLTEXT，在定义索引的列上支持值的全文查找，允许在这些索引列中插入重复值和空值。全文索引可以在CHAR、VARCHAR或者TEXT类型的列上创建。
+
+  从 MySQL5.6开始，InnoDB支持**全文搜索**和**FULLTEXT索引**。
 
 - **空间索引**
 
   空间索引是对空间数据类型的字段建立的索引，MySQL中的空间数据类型有4种，分别是GEOMETRY、POINT、LINESTRING和 POLYGON。MySQL使用 SPATIAL关键字进行扩展，使得能够用创建正规索引类似的语法创建空间索引。创建空间索引的列，必须将其声明为NOT NUL，空间索引只能在存储引擎为 MyISAM的表中创建。
-
-
 
 **索引的设计原则：**
 
@@ -948,16 +946,80 @@ CREATE TABLE t2
 CREATE TABLE t3
 (
     id    INT NOT NULL,
-    name CHAR(30) 　NOT NULL,
-    age  INT NOT　 NULL,
+    username CHAR(30) NOT NULL,
+    age  INT NOT NULL,
     info VARCHAR(255),
-    INDEX MultiIdx(id, name, age(100)) # 组合索引在使用时必须遵循 最左前缀
+    INDEX MultiIdx(id, username, info(100)) # 组合索引遵循最左前缀原则
 );
-		# 就是
-		 explain select * from t3 where id=1 AND name='joe' \G # 查询 id 和 name 会使用到MultiIdx
-		 # 以下两种查询没有id 不遵循左前缀查询，因此不会使用到MultiIdx索引
-		 explain select * from t3 where name='joe' \G 
-		 explain select * from t3 where name='joe' AND age=1 \G 
+
+# 走索引id和username的组合索引
+EXPLAIN SELECT * FROM t3 WHERE id=1 AND username='zs'\G;
+
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: t3
+   partitions: NULL
+         type: ref
+possible_keys: MultiIdx
+          key: MultiIdx
+      key_len: 94
+          ref: const,const
+         rows: 1
+     filtered: 100.00
+        Extra: NULL
+1 row in set, 1 warning (0.01 sec)
+
+# 由于不存在username，因此只对id进行索引
+EXPLAIN SELECT * FROM t3 WHERE id=1 AND info='man'\G; 
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: t3
+   partitions: NULL
+         type: ref
+possible_keys: MultiIdx
+          key: MultiIdx
+      key_len: 4
+          ref: const
+         rows: 1
+     filtered: 50.00
+        Extra: Using where
+1 row in set, 1 warning (0.01 sec)
+
+# 由于最左前缀id不存在，因此不走索引MultiIdx
+EXPLAIN SELECT * FROM t3 WHERE username='zs' AND info='man'; 
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: t3
+   partitions: NULL
+         type: ALL
+possible_keys: NULL
+          key: NULL
+      key_len: NULL
+          ref: NULL
+         rows: 2
+     filtered: 50.00
+        Extra: Using where
+1 row in set, 1 warning (0.01 sec)
+
+# 即使是乱序，只要存在最左前缀MySQL就会对其进行索引组合优化
+EXPLAIN SELECT * FROM t3 WHERE username='zs' AND id=1 AND info='man'; 
+*************************** 1. row ***************************
+           id: 1
+  select_type: SIMPLE
+        table: t3
+   partitions: NULL
+         type: ref
+possible_keys: MultiIdx
+          key: MultiIdx
+      key_len: 397
+          ref: const,const,const
+         rows: 1
+     filtered: 100.00
+        Extra: Using where
+1 row in set, 1 warning (0.01 sec)
 
 # 创建全文索引
 CREATE TABLE t4
@@ -967,7 +1029,7 @@ CREATE TABLE t4
     age  INT NOT NULL,
     info VARCHAR(255),
     FULLTEXT INDEX FullTxtIdx(info)
-) ENGINE=MyISAM;	# 仅MyISAM存储引擎支持全文索引
+) ENGINE=MyISAM;	
 
 # 创建空间索引
 CREATE TABLE t5
@@ -976,8 +1038,6 @@ CREATE TABLE t5
     SPATIAL INDEX spatIdx(g) 
 )ENGINE=MyISAM;
 ```
-
-
 
 ### 5.3 在已有表中创建索引
 

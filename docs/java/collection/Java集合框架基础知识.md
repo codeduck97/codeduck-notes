@@ -4,6 +4,8 @@
 
 ![image-20201219145900642](images/image-20201219145900642.png)
 
+`PS：`**LinkedList同时也实现了Deque接口。**
+
 ## Iterable接口
 
 ```java
