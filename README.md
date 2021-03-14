@@ -76,8 +76,7 @@
 
 1. [MySQL学习笔记](docs/database/mysql/mysql学习笔记.md)
 2. [MySQL存储引擎简述](docs/database/mysql/MySQL存储引擎简述.md)
-3. [MySQL索引](docs/database/mysql/MySQL索引.md)
-4. [InnoDB详述](docs/database/mysql/InnoDB详述.md)
+4. [InnoDB存储引擎详述](docs/database/mysql/InnoDB详述.md)
 
 ## 计算机网络
 
