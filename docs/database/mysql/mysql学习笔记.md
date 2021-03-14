@@ -1538,14 +1538,14 @@ InnoDB存储引擎并发事务处理能力大大增加了数据库资源的利�
 - **Repeatable read：**重复读，就是在开始读取数据（事务开启）时，不再允许修改操作。 **可以阻止脏读和不可重复读，但幻读仍有可能发生。**
 - **Serializable：**串行化是最高的事务隔离级别，在该级别下，事务串行化顺序执行，**可以避免脏读、不可重复读与幻读。**但是这种事务隔离级别效率低下，比较耗数据库性能，一般不使用。
 
-大多数数据库默认的事务隔离级别是Read committed，比如Sql Server , Oracle。**Mysql的默认隔离级别是Repeatable read。**引自：https://www.bilibili.com/video/BV1EE411p7dD
-
 | 隔离级别         | 脏读 | 不可重复读 | 幻读 |
 | ---------------- | ---- | ---------- | ---- |
 | READ-UNCOMMITTED | √    | √          | √    |
 | READ-COMMITTED   | ×    | √          | √    |
 | REPEATABLE-READ  | ×    | ×          | √    |
 | SERIALIZABLE     | ×    | ×          | ×    |
+
+在标准的事务隔离级别中，幻读是由更高的隔离级别 SERIALIZABLE 解决的，**但是MySQL InnoDB存储引擎提供Next-Key Lock 锁解决幻读。在Next Key lock算法下，对于索引的扫描，不仅是锁住扫描到的索引，而且还锁住这些索引覆盖的范围（gap）因此在这个范围内的插入都是不允许的。因此InnoDB存储引擎在Repeatable Read隔离级别下就阻止了幻读的出现。**
 
 ### MyISAM存储引擎
 
