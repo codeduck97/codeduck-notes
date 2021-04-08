@@ -1,6 +1,6 @@
-> 个人博客网站，阅读性可能较差，仅供学习参考，勿喷……
+> CodeDuck博客网站仅用于本人日常笔记整理，以及复习知识使用，阅读性可能较差，若不喜欢请出门左转至[JavaGuide](https://snailclimb.gitee.io/javaguide/)，勿喷……若发现博文部分内容没有标明引用，请留言指出，感谢！
 >
-> PS: 笔记面经内容借鉴于[JavaGuide](https://snailclimb.gitee.io/javaguide/)，感谢Guide bro，JVM与JUC借鉴于[mrbird](https://mrbird.cc/JVM-Learn.html)，感谢。其他内容为本人自行整理。
+> PS: 笔记内容借鉴于[JavaGuide](https://snailclimb.gitee.io/javaguide/)，JVM与JUC借鉴于[mrbird](https://mrbird.cc/JVM-Learn.html)，感谢。其他内容为本人自行整理（部分引用会在文中标明，如有疏忽请指出，谢谢）。
 
 - [Java](#Java)
   - [基础知识](#基础知识)
@@ -21,6 +21,7 @@
   - [消息队列](#消息队列)
   - [搜索引擎](#搜索引擎)
   - [Docker](#Docker)
+- [面试常见问题总结](#面试常见问题总结)
 
 ## Java
 
@@ -116,3 +117,10 @@
 
 1. [Docker常用指令汇总](docs/dev-framework/docker/docker常用指令汇总.md)
 
+### Git
+
+1. [Git指令汇总](docs/dev-framework/git/git指令.md)
+
+## 面试常见问题总结
+
+[摘自牛客面经的常见面试问题](docs/common/面试常见问题总结.md)
