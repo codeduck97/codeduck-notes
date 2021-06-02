@@ -612,6 +612,8 @@ mysql> SELECT f_price FROM fruits ORDER BY f_price DESC;
 
 ##### 15.分组查询
 
+GROUP BY语句用来与聚合函数(aggregate functions such as COUNT, SUM, AVG, MIN, or MAX.)联合使用来得到一个或多个列的结果集。
+
 ```mysql
 # GROUP BY 通常与聚集函数搭配使用
 SELECT s_id, COUNT(*) FROM fruits GROUP BY s_id;
@@ -1472,6 +1474,15 @@ DROP TRIGGER table_name.trigger_name;
 ```
 
 ## 8. 视图
+
+```sql
+# 创建视图 max_salary
+
+CREATE VIEW max_salary AS SELECT dept_no, s.`emp_no`, s.`salary` FROM dept_emp d 
+INNER JOIN salaries s ON d.`emp_no` = s.`emp_no`;
+```
+
+
 
 ## 9. MySQL日志
 

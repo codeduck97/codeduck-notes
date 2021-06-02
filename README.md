@@ -15,6 +15,7 @@
   - [MySQL](#MySQL)
 - [计算机网络](#计算机网络)
 - [计算及操作系统](#计算机操作系统)
+  - [Linux](#Linux)
 - [开发框架](#开发框架)
   - [Spring与SpringBoot](#Spring与SpringBoot)
   - [安全框架](#安全框架)
@@ -92,6 +93,10 @@
 ## 计算机操作系统
 
 1. [操作系统笔记传送门](docs/computer-os/计算机操作系统.md)
+
+### Linux
+
+1. [Linux指令整理](/docs/linux/Linux指令大全.md)
 
 ## 开发框架
 
