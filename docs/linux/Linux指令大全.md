@@ -312,8 +312,8 @@ dpkg -r pkg_name 						移除deb包
 dpkg -P pkg_name 						移除deb包(不保留配置)
 dpkg -l 								查看系统中已安装deb包
 dpkg -l pkg_name 						显示包的⼤致信息
-dpkg -L pkg_name 	查看deb包安装的⽂件
-dpkg -s pkg_name 查看包的详细信息
-dpkg –unpack xxx.deb 解开deb包的内容
+dpkg -L pkg_name 						查看deb包安装的⽂件
+dpkg -s pkg_name 						查看包的详细信息
+dpkg –unpack xxx.deb 	解开deb包的内容
 ```
 
