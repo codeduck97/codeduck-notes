@@ -1,4 +1,4 @@
-> CodeDuck博客网站仅用于本人日常笔记整理，以及复习知识使用，阅读性可能较差，若不喜欢请出门左转至[JavaGuide](https://snailclimb.gitee.io/javaguide/)，勿喷……若发现博文部分内容没有标明引用，请留言指出，感谢！
+> CodeDuck博客网站仅用于本人日常笔记整理，以及复习知识使用，阅读性可能较差，推荐[JavaGuide](https://snailclimb.gitee.io/javaguide/)，勿喷……若发现博文部分内容没有标明引用，请留言指出，感谢！
 >
 > PS: 笔记内容借鉴于[JavaGuide](https://snailclimb.gitee.io/javaguide/)，JVM与JUC借鉴于[mrbird](https://mrbird.cc/JVM-Learn.html)，感谢。其他内容为本人自行整理（部分引用会在文中标明，如有疏忽请指出，谢谢）。
 
